@@ -2,6 +2,7 @@ import express from "express";
 import {
   addItemToCart,
   getActiveCartForUser,
+  updateItemInCart,
 } from "../../services/cartService.js";
 import validateJWT from "../../middlewares/ValidatwJWT.js";
 import type { ExtendRequest } from "../../types/extendedRequest.js";
@@ -16,10 +17,17 @@ router.get("/", validateJWT, async (req: ExtendRequest, res) => {
 });
 
 router.post("/items", validateJWT, async (req: ExtendRequest, res) => {
-  const userId = req.user._id;
+  const userId = req?.user?._id;
   const { productId, quantity } = req.body;
   const response = await addItemToCart({ userId, productId, quantity });
   res.status(response.StatusCode).send(response.data);
+});
+
+router.put("/items",validateJWT ,async (req: ExtendRequest, res) => {
+  const userId = req?.user?._id;
+  const { productId, quantity } = req.body;
+  const response = await updateItemInCart({ userId, productId, quantity});
+    res.status(response.StatusCode).send(response.data);
 });
 
 export default router;
