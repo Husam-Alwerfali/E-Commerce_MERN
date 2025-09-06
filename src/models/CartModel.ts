@@ -1,7 +1,7 @@
 import mongoose, { Document, Schema, type ObjectId } from "mongoose";
 import type { IProduct } from "./productModel.js";
 
-export interface ICartItem extends Document {
+export interface ICartItem{
   product: IProduct;
   unitPrice: number;
   quantity: number;
