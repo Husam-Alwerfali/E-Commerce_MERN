@@ -32,10 +32,9 @@ router.put("/items", validateJWT, async (req: ExtendRequest, res) => {
 });
 
 router.delete(
-  "/items/:productId",
+"/items/:productId",
   validateJWT,
   async (req: ExtendRequest, res) => {
-    console.log("🗑️ DELETE item route hit");
     const userId = req?.user?._id;
     const { productId } = req.params;
     const response = await deleteItemInCart({ userId, productId });
@@ -44,7 +43,6 @@ router.delete(
 );
 
 router.delete("/", validateJWT, async (req: ExtendRequest, res) => {
-  console.log("🧹 CLEAR cart route hit");
   const userId = req?.user?._id;
   const response = await clearCart({ userId });
   res.status(response.StatusCode).send(response.data);
