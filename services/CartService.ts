@@ -1,4 +1,8 @@
-import { cartModel } from "../src/models/CartModel.js";
+import {
+  cartModel,
+  type ICart,
+  type ICartItem,
+} from "../src/models/CartModel.js";
 import productModel from "../src/models/productModel.js";
 
 interface createCartForUser {
@@ -92,7 +96,6 @@ export const updateItemInCart = async ({
     return { data: "Product not in the cart", StatusCode: 400 };
   }
 
-   
   const product = await productModel.findById(productId);
 
   if (!product) {
@@ -107,15 +110,65 @@ export const updateItemInCart = async ({
     (p) => p.product.toString() !== productId
   );
 
-   existsInCart.quantity = quantity;
-  let total = otherCartItem.reduce((sum, product) => {
-    sum += product.unitPrice * product.quantity;
-    return sum;
-  }, 0);
+  let total = calculateCartTotal({ cartItems: otherCartItem });
+  existsInCart.quantity = quantity;
 
   total += existsInCart.unitPrice * existsInCart.quantity;
   cart.totalPrice = total;
 
+  const updatedCart = await cart.save();
+  return { data: updatedCart, StatusCode: 200 };
+};
+
+interface deleteItemInCart {
+  productId: any;
+  userId: string;
+}
+
+export const deleteItemInCart = async ({
+  productId,
+  userId,
+}: deleteItemInCart) => {
+  const cart = await getActiveCartForUser({ userId });
+
+  const existsInCart = cart.items.find(
+    (p) => p.product.toString() === productId
+  );
+
+  if (!existsInCart) {
+    return { data: "Product not in the cart", StatusCode: 400 };
+  }
+
+  const otherCartItem = cart.items.filter(
+    (p) => p.product.toString() !== productId
+  );
+
+  const total = calculateCartTotal({ cartItems: otherCartItem });
+
+  cart.items = otherCartItem;
+  cart.totalPrice = total;
+
+  const updatedCart = await cart.save();
+  return { data: updatedCart, StatusCode: 200 };
+};
+
+const calculateCartTotal = ({ cartItems }: { cartItems: ICartItem[] }) => {
+  let total = cartItems.reduce((sum, product) => {
+    sum += product.unitPrice * product.quantity;
+    return sum;
+  }, 0);
+
+  return total;
+};
+
+interface ClearCart {
+  userId: string;
+}
+
+export const clearCart = async ({ userId }: ClearCart) => {
+  const cart = await getActiveCartForUser({ userId });
+  cart.items = [];
+  cart.totalPrice = 0;
   const updatedCart = await cart.save();
   return { data: updatedCart, StatusCode: 200 };
 };
