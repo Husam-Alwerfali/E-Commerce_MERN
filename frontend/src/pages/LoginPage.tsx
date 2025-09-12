@@ -4,40 +4,36 @@ import { BASE_URL } from "../api/baseUrl";
 import { useAuth } from "../context/Auth/AuthContext";
 import { useNavigate } from "react-router-dom";
 
-const RegisterPage = () => {
+const LoginPage = () => {
   const [error, setError] = useState("");
 
   const { login } = useAuth();
-  const firstNameRef = useRef<HTMLInputElement>(null);
-  const lastNameRef = useRef<HTMLInputElement>(null);
   const emailRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
 
-    const navigate = useNavigate();
+  const navigate = useNavigate();
 
   const onSubmit = async () => {
-    const firstName = firstNameRef.current?.value;
-    const lastName = lastNameRef.current?.value;
     const email = emailRef.current?.value;
     const password = passwordRef.current?.value;
 
         //validation
-    if (!firstName || !lastName || !email || !password) {
+    if (!email || !password) {
       setError("All fields are required");
       return;
     }
 
     //Make  call to Api to register the user
-    const response = await fetch(`${BASE_URL}/user/register`, {
+    const response = await fetch(`${BASE_URL}/user/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ firstName, lastName, email, password }),
+      body: JSON.stringify({ email, password }),
     });
 
     if (!response.ok) {
-      setError("Unable to register user, Please try again!");
+      setError("Unable to login user, Please try again!");
 
       return;
     }
@@ -63,7 +59,7 @@ const RegisterPage = () => {
           mt: 5,
         }}
       >
-        <Typography variant="h5">Register New Account</Typography>
+        <Typography variant="h5">Login to Your Account</Typography>
         <Box
           sx={{
             display: "flex",
@@ -75,18 +71,6 @@ const RegisterPage = () => {
             p: 2,
           }}
         >
-          <TextField
-            inputRef={firstNameRef}
-            label="First Name"
-            name="lastName"
-            variant="outlined"
-          />
-          <TextField
-            inputRef={lastNameRef}
-            label="Last Name"
-            name="lastName"
-            variant="outlined"
-          />
           <TextField
             inputRef={emailRef}
             label="Email"
@@ -101,7 +85,7 @@ const RegisterPage = () => {
             variant="outlined"
           />
           <Button onClick={onSubmit} variant="contained" color="primary">
-            Register
+            Login
           </Button>
           {error && <Typography color="red">{error}</Typography>}
         </Box>
@@ -110,4 +94,4 @@ const RegisterPage = () => {
   );
 };
 
-export default RegisterPage;
+export default LoginPage;
