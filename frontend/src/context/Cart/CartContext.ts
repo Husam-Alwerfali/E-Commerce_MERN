@@ -11,7 +11,6 @@ export const CartContext = createContext<CartContextType>({
     cartItems: [],
     totalPrice: 0,
     addToCart: () => { },
-
 });
 
 export const useCart = () => {

@@ -1,41 +1,38 @@
 import { Box, Container, Typography } from "@mui/material";
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import { useAuth } from "../context/Auth/AuthContext";
+import { useCart } from "../context/Cart/CartContext";
 import { BASE_URL } from "../api/baseUrl";
 
 const CartPage = () => {
   const { token } = useAuth();
-  const [cart, setCart] = useState();
+  const { cartItems, totalPrice } = useCart();
   const [error, setError] = useState(false);
 
-  useEffect(() => {
-    if (!token) return;
+  // useEffect(() => {
+  //   if (!token) return;
 
-    const fetchCart = async () => {
-      try {
-        const response = await fetch(`${BASE_URL}/cart`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        const data = await response.json();
-        setCart(data);
-      } catch {
-        setError(true);
-      }
-    };
+  //   const fetchCart = async () => {
 
-    fetchCart();
-  }, [token]);
-  if (error) {
-    return <Box>Something went wrong , Please try again!</Box>;
-  }
-  
-  console.log(cart);
+  //       const response = await fetch(`${BASE_URL}/cart`, {
+  //         headers: {
+  //           Authorization: `Bearer ${token}`,
+  //         },
+  //       });
+  //       const data = await response.json();
+  //       setCart(data);
+
+  //   };
+
+  //   fetchCart();
+  // }, [token]);
 
   return (
     <Container maxWidth={false} sx={{ mt: 2 }}>
       <Typography variant="h4">Cart Page</Typography>
+      {cartItems.map((item) => (
+        <Box>{item.title}</Box>
+      ))}
     </Container>
   );
 };

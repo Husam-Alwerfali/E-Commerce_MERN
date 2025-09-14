@@ -1,19 +1,51 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, type FC, type PropsWithChildren } from "react";
 import type { CartItem } from "../../types/CartItem";
 import { CartContext } from "./CartContext";
-
+import { BASE_URL } from "../../api/baseUrl";
+import { useAuth } from "../Auth/AuthContext";
 
 const CartProvider: FC<PropsWithChildren> = ({ children }) => {
+  const { token } = useAuth();
+  const [cartItems, setCartItems] = useState<CartItem[]>([]);
+  const [totalPrice, setTotalPrice] = useState<number>(0);
+  const [error, setError] = useState("");
 
-const [cartItems, setCartItems] = useState<CartItem[]>([]);
-const [totalPrice, setTotalPrice] = useState<number>(0);
+  const addToCart = async (productId: string) => {
+    try {
+      const response = await fetch(`${BASE_URL}/cart/items`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ productId, quantity: 1 }),
+      });
+      if (!response.ok) {
+        setError("Failed to add item to cart, Please try again!");
+      }
+      const cart = await response.json();
+      if (!cart) {
+        setError("Failed to parse  cart data, Please try again!");
+      }
 
-const addToCart = (productId: string) => {
-    console.log("add to cart", productId);
-
-}
+      const cartItemsMapped = cart.items.map(
+        ({ product, quantity }: { product: any; quantity: number }) => ({
+          productId: product._id,
+          title: product.title,
+          image: product.image,
+          price: product.price,
+          quantity,
+        })
+      );
+      setCartItems([...cartItemsMapped]);
+      setTotalPrice(cart.totalPrice);
+    } catch (error) {
+      console.error("Failed to add to cart", error);
+    }
+  };
   return (
-    <CartContext.Provider  value={{ cartItems, totalPrice, addToCart }}>
+    <CartContext.Provider value={{ cartItems, totalPrice, addToCart }}>
       {children}
     </CartContext.Provider>
   );
