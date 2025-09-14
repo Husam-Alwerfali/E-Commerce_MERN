@@ -9,23 +9,7 @@ const CartPage = () => {
   const { cartItems, totalPrice } = useCart();
   const [error, setError] = useState(false);
 
-  // useEffect(() => {
-  //   if (!token) return;
-
-  //   const fetchCart = async () => {
-
-  //       const response = await fetch(`${BASE_URL}/cart`, {
-  //         headers: {
-  //           Authorization: `Bearer ${token}`,
-  //         },
-  //       });
-  //       const data = await response.json();
-  //       setCart(data);
-
-  //   };
-
-  //   fetchCart();
-  // }, [token]);
+  
 
   return (
     <Container maxWidth={false} sx={{ mt: 2 }}>

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useState, type FC, type PropsWithChildren } from "react";
+import { useEffect, useState, type FC, type PropsWithChildren } from "react";
 import type { CartItem } from "../../types/CartItem";
 import { CartContext } from "./CartContext";
 import { BASE_URL } from "../../api/baseUrl";
@@ -10,6 +10,35 @@ const CartProvider: FC<PropsWithChildren> = ({ children }) => {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [totalPrice, setTotalPrice] = useState<number>(0);
   const [error, setError] = useState("");
+
+
+  useEffect(() => {
+    if (!token) return;
+
+    const fetchCart = async () => {
+
+        const response = await fetch(`${BASE_URL}/cart`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        const cart = await response.json();
+         const cartItemsMapped = cart.items.map(
+        ({ product, quantity }: { product: any; quantity: number }) => ({
+          productId: product._id,
+          title: product.title,
+          image: product.image,
+          price: product.price,
+          quantity,
+        })
+      );
+        setCartItems(cartItemsMapped);
+
+    };
+
+    fetchCart();
+  }, [token]);
+
 
   const addToCart = async (productId: string) => {
     try {
