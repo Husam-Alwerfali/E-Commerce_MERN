@@ -5,7 +5,7 @@ import ButtonGroup from "@mui/material/ButtonGroup";
 import DeleteIcon from "@mui/icons-material/Delete";
 
 const CartPage = () => {
-  const { cartItems, totalPrice, updateItemINCart, deleteItemFromCart } = useCart();
+  const { cartItems, totalPrice, updateItemINCart, deleteItemFromCart , clearCart } = useCart();
 
   const handelQuantity = (productId: string, quantity: number) => {
     if (quantity < 1) return;
@@ -18,10 +18,15 @@ const CartPage = () => {
     }
   }
 
-  return (
-    <Container fixed maxWidth={false} sx={{ mt: 2 }}>
-      <Typography variant="h4">Cart Page</Typography>
-      {cartItems.map((item) => (
+  const handelClearCart = () => {
+    if (clearCart) {
+      clearCart();
+    }
+  }
+
+  const renderCartItems = () => {
+    return <Box display="flex" flexDirection="column">
+     {cartItems.map((item) => (
         <Box
           display="flex"
           flexDirection="row"
@@ -29,7 +34,7 @@ const CartPage = () => {
           alignItems="center"
           sx={{ border: "3px solid #f5f5f5", p: 2, borderRadius: 3, mt: 2 }}
         >
-          <Box display="flex" flexDirection="row" gap={2} alignItems="center">
+        <Box display="flex" flexDirection="row" gap={2} alignItems="center">
             <img src={item.image} width="90" />
             <Box>
               <Typography variant="h6">{item.title}</Typography>
@@ -71,7 +76,19 @@ const CartPage = () => {
         <Typography margin={1} variant="h4">
           Total : {totalPrice} LYD
         </Typography>
+      </Box> 
       </Box>
+  }
+
+  return (
+    <Container fixed maxWidth={false} sx={{ mt: 2 }}>
+      <Box mb={2} display="flex" flexDirection="row" justifyContent="space-between" >
+        <Typography variant="h4">My Cart</Typography>
+        <Button onClick={()=> handelClearCart()} >Empty Cart</Button>
+      </Box>
+
+  { cartItems.length ? ( 
+     renderCartItems()  ) : ( <Typography>Cart is Empty</Typography> )}
     </Container>
   );
 };
