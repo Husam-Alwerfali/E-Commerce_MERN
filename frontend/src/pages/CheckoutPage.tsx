@@ -84,9 +84,9 @@ const CheckoutPage = () => {
         clearCart();
       }
 
-      setTimeout(() => {
-        navigate("/");
-      }, 4000);
+    //   setTimeout(() => {
+    //     navigate("/");
+    //   }, 4000);
     } catch (error) {
       console.error("Checkout error:", error);
       setError(error instanceof Error ? error.message : "Checkout failed");
