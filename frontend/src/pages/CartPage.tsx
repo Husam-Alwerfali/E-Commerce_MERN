@@ -5,14 +5,18 @@ import ButtonGroup from "@mui/material/ButtonGroup";
 import DeleteIcon from "@mui/icons-material/Delete";
 
 const CartPage = () => {
-  const { cartItems, totalPrice, updateItemINCart } = useCart();
+  const { cartItems, totalPrice, updateItemINCart, deleteItemFromCart } = useCart();
 
   const handelQuantity = (productId: string, quantity: number) => {
     if (quantity < 1) return;
     updateItemINCart(productId, quantity);
   };
 
-  
+  const handelDeleteItem = (productId: string) => {
+    if (deleteItemFromCart) {
+      deleteItemFromCart(productId);
+    }
+  }
 
   return (
     <Container fixed maxWidth={false} sx={{ mt: 2 }}>
@@ -32,7 +36,7 @@ const CartPage = () => {
               <Typography>
                 {item.quantity} x {item.price} LYD
               </Typography>
-              <Button  variant="contained">
+              <Button onClick={()=> handelDeleteItem(item.productId)} variant="contained">
                 <DeleteIcon />
               </Button>
             </Box>
