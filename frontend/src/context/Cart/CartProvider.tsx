@@ -151,22 +151,38 @@ const CartProvider: FC<PropsWithChildren> = ({ children }) => {
       });
       if (!response.ok) {
         setError("Failed to empty cart, Please try again!");
+        return;
       }
-      const cart = await response.json();
-      if (!cart) {
-        setError("Failed to parse  cart data, Please try again!");
+
+      // Check if response is JSON before parsing
+      const contentType = response.headers.get("content-type");
+      if (contentType && contentType.includes("application/json")) {
+        const cart = await response.json();
+        if (!cart) {
+          setError("Failed to parse cart data, Please try again!");
+          return;
+        }
       }
 
       setCartItems([]);
       setTotalPrice(0);
     } catch (error) {
       console.error("Failed to empty cart", error);
+      setError("Failed to empty cart, Please try again!");
     }
-  }
+  };
 
   return (
     <CartContext.Provider
-      value={{ cartItems, totalPrice, addToCart, updateItemINCart, deleteItemFromCart , clearCart}}
+      value={{
+        cartItems,
+        totalPrice,
+        error,
+        addToCart,
+        updateItemINCart,
+        deleteItemFromCart,
+        clearCart,
+      }}
     >
       {children}
     </CartContext.Provider>
