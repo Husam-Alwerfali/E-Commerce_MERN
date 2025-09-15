@@ -3,9 +3,12 @@ import { useCart } from "../context/Cart/CartContext";
 import Button from "@mui/material/Button";
 import ButtonGroup from "@mui/material/ButtonGroup";
 import DeleteIcon from "@mui/icons-material/Delete";
+import { useNavigate } from "react-router-dom";
 
 const CartPage = () => {
   const { cartItems, totalPrice, updateItemINCart, deleteItemFromCart , clearCart } = useCart();
+
+  const navigate = useNavigate();
 
   const handelQuantity = (productId: string, quantity: number) => {
     if (quantity < 1) return;
@@ -22,6 +25,10 @@ const CartPage = () => {
     if (clearCart) {
       clearCart();
     }
+  }
+
+  const handelCheckout = () => {
+   navigate("/checkout")
   }
 
   const renderCartItems = () => {
@@ -72,10 +79,11 @@ const CartPage = () => {
           </Box>
         </Box>
       ))}
-      <Box>
+      <Box display="flex" alignItems="center" justifyContent="space-between" sx={{ mt: 2 }}>
         <Typography margin={1} variant="h4">
           Total : {totalPrice} LYD
         </Typography>
+        <Button variant="contained" onClick={handelCheckout}>CHECKOUT</Button>
       </Box> 
       </Box>
   }
