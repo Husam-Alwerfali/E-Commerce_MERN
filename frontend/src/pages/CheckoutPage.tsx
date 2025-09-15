@@ -22,9 +22,7 @@ const CheckoutPage = () => {
   const [address, setAddress] = useState({
     street: "",
     city: "",
-    state: "",
-    zipCode: "",
-    country: "",
+    PhoneNumber: "",
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -46,8 +44,7 @@ const CheckoutPage = () => {
     if (
       !address.street ||
       !address.city ||
-      !address.state ||
-      !address.zipCode
+      !address.PhoneNumber
     ) {
       setError("Please fill in all address fields");
       return;
@@ -62,13 +59,16 @@ const CheckoutPage = () => {
     setError("");
 
     try {
+      // Format address as a string for the backend
+      const addressString = `${address.street}, ${address.city}, ${address.PhoneNumber}`;
+      
       const response = await fetch(`${BASE_URL}/cart/checkout`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ address }),
+        body: JSON.stringify({ address: addressString }),
       });
 
       if (!response.ok) {
@@ -76,7 +76,7 @@ const CheckoutPage = () => {
         throw new Error(`Checkout failed: ${errorText}`);
       }
 
-      await response.json(); // Parse the response
+      navigate("/order-success");
       setSuccess("Order placed successfully!");
 
       // Clear cart and redirect after successful checkout
@@ -86,7 +86,7 @@ const CheckoutPage = () => {
 
       setTimeout(() => {
         navigate("/");
-      }, 2000);
+      }, 4000);
     } catch (error) {
       console.error("Checkout error:", error);
       setError(error instanceof Error ? error.message : "Checkout failed");
@@ -187,9 +187,9 @@ const CheckoutPage = () => {
               />
               <TextField
                 fullWidth
-                label="State/Province"
-                value={address.state}
-                onChange={(e) => handleAddressChange("state", e.target.value)}
+                label="Phone Number"
+                value={address.PhoneNumber}
+                onChange={(e) => handleAddressChange("PhoneNumber", e.target.value)}
                 required
               />
             </Box>
@@ -202,19 +202,6 @@ const CheckoutPage = () => {
                 mt: 2,
               }}
             >
-              <TextField
-                fullWidth
-                label="ZIP/Postal Code"
-                value={address.zipCode}
-                onChange={(e) => handleAddressChange("zipCode", e.target.value)}
-                required
-              />
-              <TextField
-                fullWidth
-                label="Country"
-                value={address.country}
-                onChange={(e) => handleAddressChange("country", e.target.value)}
-              />
             </Box>
           </Box>
 
