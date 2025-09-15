@@ -33,6 +33,7 @@ const CartProvider: FC<PropsWithChildren> = ({ children }) => {
         })
       );
         setCartItems(cartItemsMapped);
+        setTotalPrice(cart.totalPrice);
 
     };
 
