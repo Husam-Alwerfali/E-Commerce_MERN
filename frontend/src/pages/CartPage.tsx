@@ -5,7 +5,14 @@ import ButtonGroup from "@mui/material/ButtonGroup";
 import DeleteIcon from "@mui/icons-material/Delete";
 
 const CartPage = () => {
-  const { cartItems, totalPrice } = useCart();
+  const { cartItems, totalPrice, updateItemINCart } = useCart();
+
+  const handelQuantity = (productId: string, quantity: number) => {
+    if (quantity < 1) return;
+    updateItemINCart(productId, quantity);
+  };
+
+  
 
   return (
     <Container fixed maxWidth={false} sx={{ mt: 2 }}>
@@ -25,20 +32,39 @@ const CartPage = () => {
               <Typography>
                 {item.quantity} x {item.price} LYD
               </Typography>
-              <Button variant="contained">
+              <Button  variant="contained">
                 <DeleteIcon />
               </Button>
             </Box>
           </Box>
-          <ButtonGroup variant="contained" aria-label="Basic button group">
-            <Button>-</Button>
-            <Button>+</Button>
-          </ButtonGroup>
+          <Box display="flex" flexDirection="column" alignItems="center">
+            <ButtonGroup variant="contained" aria-label="Basic button group">
+              <Button
+                onClick={() =>
+                  handelQuantity(item.productId, item.quantity - 1)
+                }
+              >
+                -
+              </Button>
+              <Button
+                onClick={() =>
+                  handelQuantity(item.productId, item.quantity + 1)
+                }
+              >
+                +
+              </Button>
+            </ButtonGroup>
+            <Typography
+              variant="caption"
+              sx={{ mt: 1, color: "text.secondary" }}
+            >
+              Stock: {item.stock}
+            </Typography>
+          </Box>
         </Box>
       ))}
       <Box>
-        <Typography margin={1}
-          variant="h4">
+        <Typography margin={1} variant="h4">
           Total : {totalPrice} LYD
         </Typography>
       </Box>
