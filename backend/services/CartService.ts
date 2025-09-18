@@ -189,7 +189,7 @@ export const clearCart = async ({ userId }: ClearCart) => {
   cart.items = [];
   cart.totalPrice = 0;
   await cart.save();
-  return { data: getActiveCartForUser, StatusCode: 200 };
+  return { data: cart, StatusCode: 200 };
 };
 
 interface CheckoutCart {

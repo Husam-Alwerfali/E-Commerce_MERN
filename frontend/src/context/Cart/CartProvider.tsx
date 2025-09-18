@@ -149,21 +149,13 @@ const CartProvider: FC<PropsWithChildren> = ({ children }) => {
           Authorization: `Bearer ${token}`,
         },
       });
+
       if (!response.ok) {
         setError("Failed to empty cart, Please try again!");
         return;
       }
 
-      // Check if response is JSON before parsing
-      const contentType = response.headers.get("content-type");
-      if (contentType && contentType.includes("application/json")) {
-        const cart = await response.json();
-        if (!cart) {
-          setError("Failed to parse cart data, Please try again!");
-          return;
-        }
-      }
-
+      // Always clear the cart state after successful response
       setCartItems([]);
       setTotalPrice(0);
     } catch (error) {
