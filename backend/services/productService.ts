@@ -1,29 +1,89 @@
-import { get } from "mongoose";
 import productModel from "../src/models/productModel.js";
 
 export const getAllProducts = async () => {
   return await productModel.find();
 };
 
-export const seedInitialProducts = async () => {
+export const getProductById = async (id: string) => {
+  return await productModel.findById(id);
+};
 
-  try{
-      const Products = [
-    { title: "Iphone 17", image: "https://www.apple.com/newsroom/images/2025/09/apple-unveils-iphone-17-pro-and-iphone-17-pro-max/article/Apple-iPhone-17-Pro-camera-close-up-250909_big.jpg.large.jpg", price: 500, stock: 50 },
-    { title: "MacBook Air", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQupFZrEg6sGbLA1oMNYlNPrOoao2gxzaWRKA&s", price: 1500, stock: 35 },
-    { title: "MacBook Pro", image: "https://static.reach-tele.com/uploads/thumbs/9f/9f46d5078f4f7a0cb2ab2380f74339f1.png", price: 2000, stock: 15 },
-   
-  ];
+export const createProduct = async (productData: {
+  title: string;
+  description: string;
+  price: number;
+  image: string;
+  stock: number;
+}) => {
+  const product = new productModel(productData);
+  return await product.save();
+};
 
-  const existingProducts = await getAllProducts();
+export const getAdminStats = async () => {
+  try {
+    // Get total products count
+    const totalProducts = await productModel.countDocuments();
 
-    if (existingProducts.length === 0) {
-        await productModel.insertMany(Products);
-    }
-  }catch(err){
-    console.log("cannot see database", err);
+    // Get all products to calculate total sales
+    const products = await productModel.find();
+    const totalSales = products.reduce(
+      (sum, product) => sum + product.salesCount,
+      0
+    );
 
+    // Get sales by product (only products with sales > 0)
+    const salesByProduct = products
+      .filter((product) => product.salesCount > 0)
+      .map((product) => ({
+        name: product.title,
+        sales: product.salesCount,
+      }))
+      .sort((a, b) => b.sales - a.sales); // Sort by sales count descending
+
+    return {
+      totalProducts,
+      totalSales,
+      salesByProduct,
+    };
+  } catch (error) {
+    throw new Error("Failed to fetch admin statistics");
   }
+};
 
+export const seedInitialProducts = async () => {
+  try {
+    const products = [
+      {
+        title: "iPhone 17",
+        description: "Latest iPhone with advanced features",
+        image:
+          "https://www.apple.com/newsroom/images/2025/09/apple-unveils-iphone-17-pro-and-iphone-17-pro-max/article/Apple-iPhone-17-Pro-camera-close-up-250909_big.jpg.large.jpg",
+        price: 500,
+        stock: 50,
+      },
+      {
+        title: "MacBook Air",
+        description: "Lightweight and powerful laptop",
+        image:
+          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQupFZrEg6sGbLA1oMNYlNPrOoao2gxzaWRKA&s",
+        price: 1500,
+        stock: 35,
+      },
+      {
+        title: "MacBook Pro",
+        description: "Professional grade laptop for developers",
+        image:
+          "https://static.reach-tele.com/uploads/thumbs/9f/9f46d5078f4f7a0cb2ab2380f74339f1.png",
+        price: 2000,
+        stock: 15,
+      },
+    ];
 
+    const existingProducts = await getAllProducts();
+    if (existingProducts.length === 0) {
+      await productModel.insertMany(products);
+    }
+  } catch (err) {
+    console.error("Cannot seed database:", err);
+  }
 };

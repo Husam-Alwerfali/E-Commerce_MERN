@@ -27,12 +27,12 @@ import { useCart } from "../context/Cart/CartContext";
 import { useNavigate } from "react-router-dom";
 
 const CartPage = () => {
-  const { cartItems, totalPrice, updateItemINCart, deleteItemFromCart, clearCart } = useCart();
+  const { cartItems, totalPrice, updateItemInCart, deleteItemFromCart, clearCart } = useCart();
   const navigate = useNavigate();
 
   const handelQuantity = (productId: string, quantity: number) => {
     if (quantity < 1) return;
-    updateItemINCart(productId, quantity);
+    updateItemInCart(productId, quantity);
   };
 
   const handelDeleteItem = (productId: string) => {

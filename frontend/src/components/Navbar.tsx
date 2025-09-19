@@ -30,7 +30,8 @@ import { useNavigate } from "react-router-dom";
 import { useCart } from "../context/Cart/CartContext";
 
 function Navbar() {
-  const { username, isAuthenticated, logout } = useAuth();
+  const { username, isAuthenticated, userRole, isLoadingAuth, logout } =
+    useAuth();
   const { cartItems } = useCart();
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(
     null
@@ -267,6 +268,34 @@ function Navbar() {
                     onClose={handleCloseUserMenu}
                     TransitionComponent={Fade}
                   >
+                    {!isLoadingAuth && userRole === "admin" && (
+                      <>
+                        <MenuItem
+                          onClick={() => {
+                            navigate("/admin");
+                            handleCloseUserMenu();
+                          }}
+                          sx={{
+                            gap: 1.5,
+                            py: 1.5,
+                            px: 2,
+                            "&:hover": {
+                              background:
+                                "linear-gradient(135deg, rgba(102,126,234,0.1) 0%, rgba(118,75,162,0.1) 100%)",
+                            },
+                          }}
+                        >
+                          <ListItemIcon>
+                            <Store sx={{ color: "#667eea" }} />
+                          </ListItemIcon>
+                          <Typography sx={{ fontWeight: 500 }}>
+                            Admin Dashboard
+                          </Typography>
+                        </MenuItem>
+                        <Divider sx={{ mx: 1, opacity: 0.3 }} />
+                      </>
+                    )}
+
                     <MenuItem
                       onClick={handelMyOrders}
                       sx={{

@@ -16,7 +16,7 @@ router.post("/register", async (req, res) => {
     });
     res.status(StatusCode).json(data);
   } catch (err) {
-    res.status(500).send("  Something went wrong ");
+    res.status(500).json({ error: "Something went wrong" });
   }
 });
 
@@ -26,18 +26,18 @@ router.post("/login", async (req, res) => {
     const { StatusCode, data } = await login({ email, password });
     res.status(StatusCode).json(data);
   } catch (err) {
-    res.status(500).send("  Something went wrong ");
+    res.status(500).json({ error: "Something went wrong" });
   }
 });
 
 router.get("/my-orders", validateJWT, async (req: ExtendRequest, res) => {
   try {
-      const userId = req.user._id;
-      const {statusCode , data} = await getMyOrders({ userId});
-      res.status(statusCode).send(data);
-    } catch (err) {
-      res.status(500).send("  Something went wrong ");
-    }
+    const userId = req.user._id;
+    const { statusCode, data } = await getMyOrders({ userId });
+    res.status(statusCode).json(data);
+  } catch (err) {
+    res.status(500).json({ error: "Something went wrong" });
+  }
 });
 
 export default router;

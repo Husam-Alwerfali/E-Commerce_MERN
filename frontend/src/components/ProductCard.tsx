@@ -1,13 +1,11 @@
 import Card from "@mui/material/Card";
-import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
-import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
-import { Box, Chip, Zoom } from "@mui/material";
+import { Box, Chip, Zoom, CardActions, Button } from "@mui/material";
 import { AddShoppingCart } from "@mui/icons-material";
+import { useNavigate } from "react-router-dom";
 import { useCart } from "../context/Cart/CartContext";
-import { useState } from "react";
 
 interface Props {
   _id: string;
@@ -17,7 +15,16 @@ interface Props {
 }
 export default function ProductCard({ _id, title, image, price }: Props) {
   const { addToCart } = useCart();
-  const [isHovered, setIsHovered] = useState(false);
+  const navigate = useNavigate();
+
+  const handleCardClick = () => {
+    navigate(`/product/${_id}`);
+  };
+
+  const handleAddToCart = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent card click when clicking add to cart
+    addToCart(_id);
+  };
 
   return (
     <Zoom in timeout={800}>
@@ -36,8 +43,7 @@ export default function ProductCard({ _id, title, image, price }: Props) {
           overflow: "hidden",
           position: "relative",
         }}
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
+        onClick={handleCardClick}
       >
         <Box sx={{ position: "relative", overflow: "hidden" }}>
           <CardMedia
@@ -50,22 +56,6 @@ export default function ProductCard({ _id, title, image, price }: Props) {
             }}
             image={image}
             title={title}
-          />
-
-          {/* Sale Badge */}
-          <Chip
-            label="NEW"
-            size="small"
-            sx={{
-              position: "absolute",
-              top: 16,
-              right: 16,
-              bgcolor: "#ff6b6b",
-              color: "white",
-              fontWeight: 600,
-              fontSize: "0.75rem",
-              boxShadow: "0 2px 8px rgba(255,107,107,0.3)",
-            }}
           />
         </Box>
 
@@ -80,7 +70,14 @@ export default function ProductCard({ _id, title, image, price }: Props) {
               lineHeight: 1.3,
               color: "#2c3e50",
               mb: 1.5,
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              display: "-webkit-box",
+              WebkitLineClamp: 2,
+              WebkitBoxOrient: "vertical",
+              height: "2.6em", // Fixed height for 2 lines
             }}
+            title={title} // Shows full title on hover
           >
             {title}
           </Typography>
@@ -119,10 +116,10 @@ export default function ProductCard({ _id, title, image, price }: Props) {
         <CardActions sx={{ p: 3, pt: 0 }}>
           <Button
             variant="contained"
-            fullWidth
             size="large"
             startIcon={<AddShoppingCart />}
-            onClick={() => addToCart(_id)}
+            onClick={handleAddToCart}
+            fullWidth
             sx={{
               py: 1.5,
               background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
@@ -138,7 +135,7 @@ export default function ProductCard({ _id, title, image, price }: Props) {
               },
             }}
           >
-            {isHovered ? "Add to Cart" : "Add to Cart"}
+            Add to Cart
           </Button>
         </CardActions>
       </Card>

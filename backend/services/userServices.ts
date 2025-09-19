@@ -10,6 +10,19 @@ interface RegisterParams {
   password: string;
 }
 
+interface LoginParams {
+  email: string;
+  password: string;
+}
+
+interface GetMyOrdersParams {
+  userId: string;
+}
+
+const generateJWT = (data: any) => {
+  return jwt.sign(data, process.env.JWT_SECRET || "");
+};
+
 export const register = async ({
   firstName,
   lastName,
@@ -31,13 +44,11 @@ export const register = async ({
   });
   await newUser.save();
 
-  return { data: generateJWT({firstName,lastName,email}) , StatusCode: 200 };
+  return {
+    data: generateJWT({ firstName, lastName, email, role: newUser.role }),
+    StatusCode: 200,
+  };
 };
-
-interface LoginParams {
-  email: string;
-  password: string;
-}
 
 export const login = async ({ email, password }: LoginParams) => {
   const findUser = await userModel.findOne({ email });
@@ -47,27 +58,23 @@ export const login = async ({ email, password }: LoginParams) => {
 
   const isPasswordMatch = await bcrypt.compare(password, findUser.password);
   if (isPasswordMatch) {
-    return { data: generateJWT({email,firstName: findUser.firstName , lastName:findUser.lastName}) , StatusCode: 200 };
+    return {
+      data: generateJWT({
+        email,
+        firstName: findUser.firstName,
+        lastName: findUser.lastName,
+        role: findUser.role,
+      }),
+      StatusCode: 200,
+    };
   }
   return { data: "Incorrect email or password", StatusCode: 400 };
 };
 
-interface GetMyOrdersParams {
-  userId: string;
-}
-export const getMyOrders = async ({ userId }: GetMyOrdersParams ) => {
-  try{
-    return {data : await orderModel.find({userId}), statusCode: 200 }  
-// .populate("items.product");
-  }catch(err){
+export const getMyOrders = async ({ userId }: GetMyOrdersParams) => {
+  try {
+    return { data: await orderModel.find({ userId }), statusCode: 200 };
+  } catch (err) {
     throw err;
   }
-
-
-}
-
-
-const generateJWT = (data :any)=>{
-  return jwt.sign(data, process.env.JWT_SECRET || "" )
-
-}
+};

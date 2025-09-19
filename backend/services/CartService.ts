@@ -6,24 +6,57 @@ import {
 import { orderModel, type IOrderItem } from "../src/models/orderModel.js";
 import productModel from "../src/models/productModel.js";
 
-interface createCartForUser {
+interface CreateCartForUser {
   userId: string;
 }
 
-const createCartForUser = async ({ userId }: createCartForUser) => {
+interface GetActiveCartForUser {
+  userId: string;
+  populateProduct?: boolean;
+}
+
+interface AddItemToCart {
+  productId: any;
+  quantity: number;
+  userId: string;
+}
+
+interface UpdateItemInCart {
+  productId: any;
+  quantity: number;
+  userId: string;
+}
+
+interface DeleteItemInCart {
+  productId: any;
+  userId: string;
+}
+
+interface ClearCart {
+  userId: string;
+}
+
+interface CheckoutCart {
+  userId: string;
+  address: string;
+}
+
+const createCartForUser = async ({ userId }: CreateCartForUser) => {
   const cart = await cartModel.create({ userId, totalPrice: 0 });
   await cart.save();
   return cart;
 };
 
-interface getActiveCartForUser {
-  userId: string;
-  populateProduct?: boolean;
-}
+const calculateCartTotal = ({ cartItems }: { cartItems: ICartItem[] }) => {
+  return cartItems.reduce((sum, product) => {
+    return sum + product.unitPrice * product.quantity;
+  }, 0);
+};
+
 export const getActiveCartForUser = async ({
   userId,
   populateProduct,
-}: getActiveCartForUser) => {
+}: GetActiveCartForUser) => {
   let cart;
   if (populateProduct) {
     cart = await cartModel
@@ -40,20 +73,14 @@ export const getActiveCartForUser = async ({
   return cart;
 };
 
-interface addItemToCart {
-  productId: any;
-  quantity: number;
-  userId: string;
-}
-
 export const addItemToCart = async ({
   productId,
   quantity,
   userId,
-}: addItemToCart) => {
+}: AddItemToCart) => {
   const cart = await getActiveCartForUser({ userId });
 
-  // Dose the product already exist in the cart ??
+  // Does the product already exist in the cart?
   const existsInCart = cart.items.find(
     (p) => p.product.toString() === productId
   );
@@ -61,15 +88,15 @@ export const addItemToCart = async ({
   if (existsInCart) {
     return { data: "Product already in the cart", StatusCode: 400 };
   }
-  // Fetch the product
 
+  // Fetch the product
   const product = await productModel.findById(productId);
   if (!product) {
     return { data: "Product not found", StatusCode: 400 };
   }
 
   if (product.stock < quantity) {
-    return { data: "low stock for item", StatusCode: 400 };
+    return { data: "Low stock for item", StatusCode: 400 };
   }
 
   cart.items.push({
@@ -78,7 +105,7 @@ export const addItemToCart = async ({
     quantity,
   });
 
-  //Update the total price
+  // Update the total price
   cart.totalPrice += product.price * quantity;
 
   await cart.save();
@@ -88,17 +115,11 @@ export const addItemToCart = async ({
   };
 };
 
-interface updateItemInCart {
-  productId: any;
-  quantity: number;
-  userId: string;
-}
-
 export const updateItemInCart = async ({
   productId,
   quantity,
   userId,
-}: updateItemInCart) => {
+}: UpdateItemInCart) => {
   const cart = await getActiveCartForUser({ userId });
 
   const existsInCart = cart.items.find(
@@ -116,14 +137,14 @@ export const updateItemInCart = async ({
   }
 
   if (product.stock < quantity) {
-    return { data: "low stock for item", StatusCode: 400 };
+    return { data: "Low stock for item", StatusCode: 400 };
   }
 
-  const otherCartItem = cart.items.filter(
+  const otherCartItems = cart.items.filter(
     (p) => p.product.toString() !== productId
   );
 
-  let total = calculateCartTotal({ cartItems: otherCartItem });
+  let total = calculateCartTotal({ cartItems: otherCartItems });
   existsInCart.quantity = quantity;
 
   total += existsInCart.unitPrice * existsInCart.quantity;
@@ -136,15 +157,10 @@ export const updateItemInCart = async ({
   };
 };
 
-interface deleteItemInCart {
-  productId: any;
-  userId: string;
-}
-
 export const deleteItemInCart = async ({
   productId,
   userId,
-}: deleteItemInCart) => {
+}: DeleteItemInCart) => {
   const cart = await getActiveCartForUser({ userId });
 
   const existsInCart = cart.items.find(
@@ -155,13 +171,13 @@ export const deleteItemInCart = async ({
     return { data: "Product not in the cart", StatusCode: 400 };
   }
 
-  const otherCartItem = cart.items.filter(
+  const otherCartItems = cart.items.filter(
     (p) => p.product.toString() !== productId
   );
 
-  const total = calculateCartTotal({ cartItems: otherCartItem });
+  const total = calculateCartTotal({ cartItems: otherCartItems });
 
-  cart.items = otherCartItem;
+  cart.items = otherCartItems;
   cart.totalPrice = total;
 
   await cart.save();
@@ -171,19 +187,6 @@ export const deleteItemInCart = async ({
   };
 };
 
-const calculateCartTotal = ({ cartItems }: { cartItems: ICartItem[] }) => {
-  let total = cartItems.reduce((sum, product) => {
-    sum += product.unitPrice * product.quantity;
-    return sum;
-  }, 0);
-
-  return total;
-};
-
-interface ClearCart {
-  userId: string;
-}
-
 export const clearCart = async ({ userId }: ClearCart) => {
   const cart = await getActiveCartForUser({ userId });
   cart.items = [];
@@ -191,11 +194,6 @@ export const clearCart = async ({ userId }: ClearCart) => {
   await cart.save();
   return { data: cart, StatusCode: 200 };
 };
-
-interface CheckoutCart {
-  userId: string;
-  address: string;
-}
 
 export const checkoutCart = async ({ userId, address }: CheckoutCart) => {
   if (!address) {
@@ -206,7 +204,7 @@ export const checkoutCart = async ({ userId, address }: CheckoutCart) => {
 
   const orderItems: IOrderItem[] = [];
 
-  //loop cartItems and create orderItems
+  // Loop through cart items and create order items
   for (const item of cart.items) {
     const product = await productModel.findById(item.product);
 
@@ -222,6 +220,10 @@ export const checkoutCart = async ({ userId, address }: CheckoutCart) => {
     };
 
     orderItems.push(orderItem);
+
+    // Update salesCount for the product
+    product.salesCount += item.quantity;
+    await product.save();
   }
 
   const order = await orderModel.create({
@@ -233,8 +235,7 @@ export const checkoutCart = async ({ userId, address }: CheckoutCart) => {
 
   await order.save();
 
-  //update cart status to be completed
-
+  // Update cart status to be completed
   cart.status = "completed";
   await cart.save();
 

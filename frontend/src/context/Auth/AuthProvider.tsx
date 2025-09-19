@@ -1,4 +1,4 @@
-import { useState, type FC, type PropsWithChildren } from "react";
+import { useState, type FC, type PropsWithChildren, useEffect } from "react";
 import { AuthContext } from "./AuthContext";
 import { BASE_URL } from "../../api/baseUrl";
 
@@ -12,11 +12,29 @@ const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
   const [token, setToken] = useState<string | null>(
     localStorage.getItem(TOKEN_KEY)
   );
+  const [userRole, setUserRole] = useState<string | null>(null);
+  const [isLoadingAuth, setIsLoadingAuth] = useState(true);
 
   const [myOrders, setMyOrders] = useState([]);
-  
+
   const isAuthenticated = !!token;
-  
+
+  // Decode JWT token to get user role
+  useEffect(() => {
+    if (token) {
+      try {
+        const payload = JSON.parse(atob(token.split(".")[1]));
+        setUserRole(payload.role || "user");
+      } catch (error) {
+        console.error("Error decoding token:", error);
+        setUserRole("user");
+      }
+    } else {
+      setUserRole(null);
+    }
+    setIsLoadingAuth(false);
+  }, [token]);
+
   const login = (username: string, token: string) => {
     setUsername(username);
     setToken(token);
@@ -27,11 +45,13 @@ const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
   const logout = () => {
     setUsername(null);
     setToken(null);
+    setUserRole(null);
+    setIsLoadingAuth(false);
     localStorage.removeItem(USERNAME_KEY);
     localStorage.removeItem(TOKEN_KEY);
   };
 
-  const getMyOrders = async ()  => {
+  const getMyOrders = async () => {
     if (!token) return;
     try {
       const response = await fetch(`${BASE_URL}/user/my-orders`, {
@@ -41,7 +61,7 @@ const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
         },
       });
       if (!response.ok) {
-       return;
+        return;
       }
       const orders = await response.json();
       setMyOrders(orders);
@@ -49,12 +69,21 @@ const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
       console.error("Error fetching orders:", error);
       throw error;
     }
-  }
-
+  };
 
   return (
     <AuthContext.Provider
-      value={{ username, token, isAuthenticated,myOrders , login, logout,getMyOrders }}
+      value={{
+        username,
+        token,
+        isAuthenticated,
+        myOrders,
+        userRole,
+        isLoadingAuth,
+        login,
+        logout,
+        getMyOrders,
+      }}
     >
       {children}
     </AuthContext.Provider>

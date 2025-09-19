@@ -2,10 +2,10 @@ import { Navigate, Outlet } from "react-router-dom";
 import { Box, CircularProgress } from "@mui/material";
 import { useAuth } from "../context/Auth/AuthContext";
 
-const ProtectedRoute = () => {
-  const { isAuthenticated, isLoadingAuth } = useAuth();
+const AdminProtectedRoute = () => {
+  const { isAuthenticated, userRole, isLoadingAuth } = useAuth();
 
-  // Show loading while checking authentication
+  // Show loading while decoding JWT token
   if (isLoadingAuth) {
     return (
       <Box
@@ -25,7 +25,11 @@ const ProtectedRoute = () => {
     return <Navigate to="/login" replace />;
   }
 
+  if (userRole !== "admin") {
+    return <Navigate to="/unauthorized" replace />;
+  }
+
   return <Outlet />;
 };
 
-export default ProtectedRoute;
+export default AdminProtectedRoute;

@@ -6,16 +6,17 @@ interface CartContextType {
   totalPrice: number;
   error: string;
   addToCart: (productId: string) => void;
-  updateItemINCart: (productId: string, quantity: number) => void;
-  deleteItemFromCart?: (productId: string) => void;
-  clearCart?: () => Promise<void>;
+  updateItemInCart: (productId: string, quantity: number) => void;
+  deleteItemFromCart: (productId: string) => void;
+  clearCart: () => Promise<void>;
 }
+
 export const CartContext = createContext<CartContextType>({
   cartItems: [],
   totalPrice: 0,
   error: "",
   addToCart: () => {},
-  updateItemINCart: () => {},
+  updateItemInCart: () => {},
   deleteItemFromCart: () => {},
   clearCart: async () => {},
 });

@@ -28,6 +28,7 @@ import { useEffect, useRef, useState } from "react";
 import { BASE_URL } from "../api/baseUrl";
 import { useAuth } from "../context/Auth/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { redirectBasedOnRole } from "../utils/roleUtils";
 
 const LoginPage = () => {
   const [error, setError] = useState("");
@@ -38,6 +39,13 @@ const LoginPage = () => {
   const emailRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
+
+  // Redirect if user is already authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate("/");
+    }
+  }, [isAuthenticated, navigate]);
 
   const handleClickShowPassword = () => setShowPassword(!showPassword);
 
@@ -85,7 +93,9 @@ const LoginPage = () => {
       }
 
       login(email, token);
-      navigate("/");
+
+      // Redirect based on user role
+      redirectBasedOnRole(navigate, token);
     } catch {
       setError("Network error. Please check your connection and try again!");
     } finally {
@@ -99,12 +109,10 @@ const LoginPage = () => {
 
   // Redirect if already authenticated
   useEffect(() => {
-  if (isAuthenticated) {
-    navigate("/"); 
-  }
-}, [isAuthenticated, navigate]);
-
-  
+    if (isAuthenticated) {
+      redirectBasedOnRole(navigate);
+    }
+  }, [isAuthenticated, navigate]);
 
   return (
     <Box
