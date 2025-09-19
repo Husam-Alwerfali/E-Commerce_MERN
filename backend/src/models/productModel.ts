@@ -19,7 +19,7 @@ const productSchema: Schema = new Schema<IProduct>({
 });
 
 // Pre-save middleware to ensure stock doesn't go below 0
-productSchema.pre('save', function(next) {
+productSchema.pre("save", function (next) {
   if ((this as any).stock < 0) {
     (this as any).stock = 0;
   }

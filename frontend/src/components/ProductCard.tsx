@@ -14,7 +14,13 @@ interface Props {
   price: string;
   stock: number;
 }
-export default function ProductCard({ _id, title, image, price, stock }: Props) {
+export default function ProductCard({
+  _id,
+  title,
+  image,
+  price,
+  stock,
+}: Props) {
   const { addToCart } = useCart();
   const navigate = useNavigate();
 
@@ -103,24 +109,18 @@ export default function ProductCard({ _id, title, image, price, stock }: Props) 
 
             <Chip
               label={
-                stock > 0 
-                  ? stock > 10 
-                    ? "In Stock" 
+                stock > 0
+                  ? stock > 10
+                    ? "In Stock"
                     : `Only ${stock} left`
                   : "Out of Stock"
               }
               size="small"
               sx={{
-                bgcolor: stock > 0 
-                  ? stock > 10 
-                    ? "#e8f5e8" 
-                    : "#fff3e0"
-                  : "#ffebee",
-                color: stock > 0 
-                  ? stock > 10 
-                    ? "#27ae60" 
-                    : "#f57c00"
-                  : "#d32f2f",
+                bgcolor:
+                  stock > 0 ? (stock > 10 ? "#e8f5e8" : "#fff3e0") : "#ffebee",
+                color:
+                  stock > 0 ? (stock > 10 ? "#27ae60" : "#f57c00") : "#d32f2f",
                 fontWeight: 500,
                 fontSize: "0.7rem",
               }}
@@ -138,19 +138,24 @@ export default function ProductCard({ _id, title, image, price, stock }: Props) 
             disabled={stock === 0}
             sx={{
               py: 1.5,
-              background: stock > 0 
-                ? "linear-gradient(135deg, #667eea 0%, #764ba2 100%)"
-                : "linear-gradient(135deg, #bdbdbd 0%, #757575 100%)",
+              background:
+                stock > 0
+                  ? "linear-gradient(135deg, #667eea 0%, #764ba2 100%)"
+                  : "linear-gradient(135deg, #bdbdbd 0%, #757575 100%)",
               fontWeight: 600,
               fontSize: "0.95rem",
               borderRadius: 2,
               textTransform: "none",
               transition: "all 0.3s ease-in-out",
-              "&:hover": stock > 0 ? {
-                background: "linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%)",
-                transform: "translateY(-2px)",
-                boxShadow: "0 6px 16px rgba(102,126,234,0.4)",
-              } : {},
+              "&:hover":
+                stock > 0
+                  ? {
+                      background:
+                        "linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%)",
+                      transform: "translateY(-2px)",
+                      boxShadow: "0 6px 16px rgba(102,126,234,0.4)",
+                    }
+                  : {},
               "&:disabled": {
                 background: "linear-gradient(135deg, #bdbdbd 0%, #757575 100%)",
                 color: "white",

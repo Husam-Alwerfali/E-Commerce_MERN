@@ -54,11 +54,9 @@ router.post(
       }
 
       if (price <= 0 || stock < 0) {
-        return res
-          .status(400)
-          .json({
-            error: "Price must be positive and stock cannot be negative",
-          });
+        return res.status(400).json({
+          error: "Price must be positive and stock cannot be negative",
+        });
       }
 
       const productData = {
@@ -115,11 +113,9 @@ router.put(
       }
 
       if (price <= 0 || stock < 0) {
-        return res
-          .status(400)
-          .json({
-            error: "Price must be positive and stock cannot be negative",
-          });
+        return res.status(400).json({
+          error: "Price must be positive and stock cannot be negative",
+        });
       }
 
       const productData = {
@@ -131,7 +127,7 @@ router.put(
       };
 
       const product = await updateProduct(id, productData);
-      
+
       if (!product) {
         return res.status(404).json({ error: "Product not found" });
       }
@@ -159,12 +155,14 @@ router.delete(
       }
 
       const product = await deleteProduct(id);
-      
+
       if (!product) {
         return res.status(404).json({ error: "Product not found" });
       }
 
-      res.status(200).json({ message: "Product deleted successfully", product });
+      res
+        .status(200)
+        .json({ message: "Product deleted successfully", product });
     } catch (err) {
       console.error("Error deleting product:", err);
       res.status(500).json({ error: "Failed to delete product" });

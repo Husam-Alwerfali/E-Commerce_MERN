@@ -148,7 +148,11 @@ const addProduct = async (data: ProductFormData, token: string) => {
   return response.json();
 };
 
-const updateProduct = async (id: string, data: ProductFormData, token: string) => {
+const updateProduct = async (
+  id: string,
+  data: ProductFormData,
+  token: string
+) => {
   const response = await fetch(`${BASE_URL}/product/admin/product/${id}`, {
     method: "PUT",
     headers: {
@@ -255,7 +259,8 @@ const AdminDashboard = () => {
 
   // React Query - Update product mutation
   const updateProductMutation = useMutation({
-    mutationFn: ({ id, data }: { id: string; data: ProductFormData }) => updateProduct(id, data, token!),
+    mutationFn: ({ id, data }: { id: string; data: ProductFormData }) =>
+      updateProduct(id, data, token!),
     onSuccess: (updatedProduct) => {
       setSuccess(`Product "${updatedProduct.title}" updated successfully!`);
       setEditingProduct(null);
@@ -305,13 +310,13 @@ const AdminDashboard = () => {
       image: product.image,
       stock: product.stock.toString(),
     });
-    
+
     // Scroll to form
-    const formElement = document.getElementById('product-form');
+    const formElement = document.getElementById("product-form");
     if (formElement) {
-      formElement.scrollIntoView({ 
-        behavior: 'smooth', 
-        block: 'start' 
+      formElement.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
       });
     }
     console.log("Edit mode activated, form should show now");
@@ -498,9 +503,11 @@ const AdminDashboard = () => {
                 <Typography variant="h6" sx={{ mb: 3, fontWeight: 600 }}>
                   Manage Products
                 </Typography>
-                
+
                 {productsLoading ? (
-                  <Box sx={{ display: "flex", justifyContent: "center", py: 4 }}>
+                  <Box
+                    sx={{ display: "flex", justifyContent: "center", py: 4 }}
+                  >
                     <CircularProgress size={40} />
                   </Box>
                 ) : productsError ? (
@@ -513,11 +520,17 @@ const AdminDashboard = () => {
                       <TableHead>
                         <TableRow>
                           <TableCell sx={{ fontWeight: 600 }}>Image</TableCell>
-                          <TableCell sx={{ fontWeight: 600 }}>Product Name</TableCell>
-                          <TableCell sx={{ fontWeight: 600 }}>Price (LYD)</TableCell>
+                          <TableCell sx={{ fontWeight: 600 }}>
+                            Product Name
+                          </TableCell>
+                          <TableCell sx={{ fontWeight: 600 }}>
+                            Price (LYD)
+                          </TableCell>
                           <TableCell sx={{ fontWeight: 600 }}>Stock</TableCell>
                           <TableCell sx={{ fontWeight: 600 }}>Sales</TableCell>
-                          <TableCell align="center" sx={{ fontWeight: 600 }}>Actions</TableCell>
+                          <TableCell align="center" sx={{ fontWeight: 600 }}>
+                            Actions
+                          </TableCell>
                         </TableRow>
                       </TableHead>
                       <TableBody>
@@ -532,31 +545,43 @@ const AdminDashboard = () => {
                               />
                             </TableCell>
                             <TableCell>
-                              <Typography variant="body1" sx={{ fontWeight: 500 }}>
+                              <Typography
+                                variant="body1"
+                                sx={{ fontWeight: 500 }}
+                              >
                                 {product.title}
                               </Typography>
-                              <Typography 
-                                variant="body2" 
+                              <Typography
+                                variant="body2"
                                 color="text.secondary"
-                                sx={{ 
-                                  maxWidth: 200, 
-                                  overflow: 'hidden', 
-                                  textOverflow: 'ellipsis',
-                                  whiteSpace: 'nowrap'
+                                sx={{
+                                  maxWidth: 200,
+                                  overflow: "hidden",
+                                  textOverflow: "ellipsis",
+                                  whiteSpace: "nowrap",
                                 }}
                               >
                                 {product.description}
                               </Typography>
                             </TableCell>
                             <TableCell>
-                              <Typography variant="body1" sx={{ fontWeight: 500 }}>
+                              <Typography
+                                variant="body1"
+                                sx={{ fontWeight: 500 }}
+                              >
                                 {product.price.toFixed(2)} LYD
                               </Typography>
                             </TableCell>
                             <TableCell>
-                              <Chip 
+                              <Chip
                                 label={`${product.stock} units`}
-                                color={product.stock > 10 ? "success" : product.stock > 0 ? "warning" : "error"}
+                                color={
+                                  product.stock > 10
+                                    ? "success"
+                                    : product.stock > 0
+                                    ? "warning"
+                                    : "error"
+                                }
                                 size="small"
                               />
                             </TableCell>
@@ -566,27 +591,36 @@ const AdminDashboard = () => {
                               </Typography>
                             </TableCell>
                             <TableCell align="center">
-                              <Box sx={{ display: 'flex', gap: 1, justifyContent: 'center' }}>
-                                <IconButton 
-                                  size="small" 
+                              <Box
+                                sx={{
+                                  display: "flex",
+                                  gap: 1,
+                                  justifyContent: "center",
+                                }}
+                              >
+                                <IconButton
+                                  size="small"
                                   color="primary"
                                   onClick={() => handleEditProduct(product)}
-                                  sx={{ 
-                                    '&:hover': { 
-                                      backgroundColor: 'rgba(25, 118, 210, 0.1)' 
-                                    }
+                                  sx={{
+                                    "&:hover": {
+                                      backgroundColor:
+                                        "rgba(25, 118, 210, 0.1)",
+                                    },
                                   }}
                                 >
                                   <EditIcon fontSize="small" />
                                 </IconButton>
-                                <IconButton 
-                                  size="small" 
+                                <IconButton
+                                  size="small"
                                   color="error"
-                                  onClick={() => handleDeleteProduct(product._id)}
-                                  sx={{ 
-                                    '&:hover': { 
-                                      backgroundColor: 'rgba(244, 67, 54, 0.1)' 
-                                    }
+                                  onClick={() =>
+                                    handleDeleteProduct(product._id)
+                                  }
+                                  sx={{
+                                    "&:hover": {
+                                      backgroundColor: "rgba(244, 67, 54, 0.1)",
+                                    },
                                   }}
                                 >
                                   <DeleteIcon fontSize="small" />
@@ -625,8 +659,8 @@ const AdminDashboard = () => {
             {/* Header Section */}
             <Paper
               sx={{
-                background: editingProduct 
-                  ? "linear-gradient(135deg, #ff9800 0%, #f57c00 100%)"  // Orange gradient for edit mode
+                background: editingProduct
+                  ? "linear-gradient(135deg, #ff9800 0%, #f57c00 100%)" // Orange gradient for edit mode
                   : "linear-gradient(135deg, #667eea 0%, #764ba2 100%)", // Blue gradient for add mode
                 color: "white",
                 p: 4,
@@ -652,10 +686,9 @@ const AdminDashboard = () => {
                   fontSize: "1.1rem",
                 }}
               >
-                {editingProduct 
+                {editingProduct
                   ? `Update "${editingProduct.title}" details`
-                  : "Add products to your store inventory"
-                }
+                  : "Add products to your store inventory"}
               </Typography>
             </Paper>
 
@@ -663,7 +696,9 @@ const AdminDashboard = () => {
               <Box
                 id="product-form"
                 component="form"
-                onSubmit={handleSubmit(editingProduct ? handleUpdateProduct : onSubmit)}
+                onSubmit={handleSubmit(
+                  editingProduct ? handleUpdateProduct : onSubmit
+                )}
                 sx={{ mt: 2 }}
               >
                 <Grid container spacing={3}>
@@ -845,7 +880,9 @@ const AdminDashboard = () => {
                 )}
 
                 {/* Error Alert for operations */}
-                {(addProductMutation.error || updateProductMutation.error || deleteProductMutation.error) && (
+                {(addProductMutation.error ||
+                  updateProductMutation.error ||
+                  deleteProductMutation.error) && (
                   <Fade in timeout={300}>
                     <Alert
                       severity="error"
@@ -854,15 +891,15 @@ const AdminDashboard = () => {
                         borderRadius: 2,
                       }}
                     >
-                      {addProductMutation.error?.message || 
-                       updateProductMutation.error?.message || 
-                       deleteProductMutation.error?.message}
+                      {addProductMutation.error?.message ||
+                        updateProductMutation.error?.message ||
+                        deleteProductMutation.error?.message}
                     </Alert>
                   </Fade>
                 )}
 
                 {/* Submit Buttons */}
-                <Box sx={{ mt: 4, display: 'flex', gap: 2 }}>
+                <Box sx={{ mt: 4, display: "flex", gap: 2 }}>
                   {editingProduct && (
                     <Button
                       type="button"
@@ -893,9 +930,13 @@ const AdminDashboard = () => {
                     type="submit"
                     variant="contained"
                     size="large"
-                    disabled={addProductMutation.isPending || updateProductMutation.isPending}
+                    disabled={
+                      addProductMutation.isPending ||
+                      updateProductMutation.isPending
+                    }
                     startIcon={
-                      (addProductMutation.isPending || updateProductMutation.isPending) ? (
+                      addProductMutation.isPending ||
+                      updateProductMutation.isPending ? (
                         <CircularProgress size={20} color="inherit" />
                       ) : editingProduct ? (
                         <EditIcon />
@@ -921,8 +962,8 @@ const AdminDashboard = () => {
                         background: "rgba(102,126,234,0.6)",
                       },
                       transition: "all 0.3s ease-in-out",
-                      flex: editingProduct ? 1 : 'auto',
-                      width: editingProduct ? 'auto' : '100%',
+                      flex: editingProduct ? 1 : "auto",
+                      width: editingProduct ? "auto" : "100%",
                     }}
                   >
                     {addProductMutation.isPending
@@ -950,17 +991,15 @@ const AdminDashboard = () => {
           </DialogTitle>
           <DialogContent>
             <Typography>
-              Are you sure you want to delete this product? This action cannot be undone.
+              Are you sure you want to delete this product? This action cannot
+              be undone.
             </Typography>
           </DialogContent>
           <DialogActions sx={{ p: 2 }}>
-            <Button 
-              onClick={() => setDeleteConfirmId(null)}
-              color="inherit"
-            >
+            <Button onClick={() => setDeleteConfirmId(null)} color="inherit">
               Cancel
             </Button>
-            <Button 
+            <Button
               onClick={confirmDeleteProduct}
               color="error"
               variant="contained"
@@ -973,7 +1012,7 @@ const AdminDashboard = () => {
                 )
               }
             >
-              {deleteProductMutation.isPending ? 'Deleting...' : 'Delete'}
+              {deleteProductMutation.isPending ? "Deleting..." : "Delete"}
             </Button>
           </DialogActions>
         </Dialog>

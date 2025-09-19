@@ -1,6 +1,6 @@
 import productModel from "./src/models/productModel.js";
 import mongoose from "mongoose";
-import dotenv from 'dotenv';
+import dotenv from "dotenv";
 
 dotenv.config();
 
@@ -12,7 +12,7 @@ async function testStockLimits() {
 
     // Find a product with low stock
     let product = await productModel.findOne({ stock: { $gt: 0, $lt: 10 } });
-    
+
     if (!product) {
       // Create a test product with low stock
       product = new productModel({
@@ -21,7 +21,7 @@ async function testStockLimits() {
         image: "https://via.placeholder.com/300",
         price: 99.99,
         stock: 2, // Very low stock
-        salesCount: 0
+        salesCount: 0,
       });
       await product.save();
       console.log("Created test product with low stock");
@@ -39,9 +39,13 @@ async function testStockLimits() {
       product.stock -= requestedQty1;
       product.salesCount += requestedQty1;
       await product.save();
-      console.log(`✅ Success! Stock now: ${product.stock}, Sales: ${product.salesCount}`);
+      console.log(
+        `✅ Success! Stock now: ${product.stock}, Sales: ${product.salesCount}`
+      );
     } else {
-      console.log(`❌ Failed! Not enough stock. Available: ${product.stock}, Requested: ${requestedQty1}`);
+      console.log(
+        `❌ Failed! Not enough stock. Available: ${product.stock}, Requested: ${requestedQty1}`
+      );
     }
 
     // Test 2: Try to buy more than available (should fail)
@@ -50,7 +54,9 @@ async function testStockLimits() {
     if (product.stock >= requestedQty2) {
       console.log(`✅ Sufficient stock available`);
     } else {
-      console.log(`❌ Insufficient stock! Available: ${product.stock}, Requested: ${requestedQty2}`);
+      console.log(
+        `❌ Insufficient stock! Available: ${product.stock}, Requested: ${requestedQty2}`
+      );
       console.log(`This would trigger an error in the cart service`);
     }
 
@@ -59,7 +65,9 @@ async function testStockLimits() {
     console.log(`Product: ${product.title}`);
     console.log(`Stock: ${product.stock} units`);
     console.log(`Sales: ${product.salesCount} sold`);
-    console.log(`Status: ${product.stock > 0 ? '✅ In Stock' : '❌ Out of Stock'}`);
+    console.log(
+      `Status: ${product.stock > 0 ? "✅ In Stock" : "❌ Out of Stock"}`
+    );
 
     process.exit(0);
   } catch (error) {

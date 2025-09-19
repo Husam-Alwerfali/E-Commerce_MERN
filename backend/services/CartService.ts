@@ -96,9 +96,9 @@ export const addItemToCart = async ({
   }
 
   if (product.stock < quantity) {
-    return { 
-      data: `Insufficient stock for ${product.title}. Available: ${product.stock}, Requested: ${quantity}`, 
-      StatusCode: 400 
+    return {
+      data: `Insufficient stock for ${product.title}. Available: ${product.stock}, Requested: ${quantity}`,
+      StatusCode: 400,
     };
   }
 
@@ -140,9 +140,9 @@ export const updateItemInCart = async ({
   }
 
   if (product.stock < quantity) {
-    return { 
-      data: `Insufficient stock for ${product.title}. Available: ${product.stock}, Requested: ${quantity}`, 
-      StatusCode: 400 
+    return {
+      data: `Insufficient stock for ${product.title}. Available: ${product.stock}, Requested: ${quantity}`,
+      StatusCode: 400,
     };
   }
 
@@ -220,9 +220,9 @@ export const checkoutCart = async ({ userId, address }: CheckoutCart) => {
 
     // Check if there's enough stock before checkout
     if (product.stock < item.quantity) {
-      return { 
-        data: `Insufficient stock for ${product.title}. Available: ${product.stock}, Requested: ${item.quantity}`, 
-        StatusCode: 400 
+      return {
+        data: `Insufficient stock for ${product.title}. Available: ${product.stock}, Requested: ${item.quantity}`,
+        StatusCode: 400,
       };
     }
 

@@ -19,13 +19,16 @@ export const createProduct = async (productData: {
   return await product.save();
 };
 
-export const updateProduct = async (id: string, productData: {
-  title?: string;
-  description?: string;
-  price?: number;
-  image?: string;
-  stock?: number;
-}) => {
+export const updateProduct = async (
+  id: string,
+  productData: {
+    title?: string;
+    description?: string;
+    price?: number;
+    image?: string;
+    stock?: number;
+  }
+) => {
   return await productModel.findByIdAndUpdate(id, productData, { new: true });
 };
 

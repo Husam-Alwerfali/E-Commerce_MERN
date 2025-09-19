@@ -1,7 +1,7 @@
 import { addItemToCart } from "./services/CartService.js";
 import productModel from "./src/models/productModel.js";
 import mongoose from "mongoose";
-import dotenv from 'dotenv';
+import dotenv from "dotenv";
 
 dotenv.config();
 
@@ -13,29 +13,31 @@ async function addCartItems() {
 
     // Get some products to add to cart
     const products = await productModel.find({ stock: { $gt: 0 } }).limit(3);
-    
+
     console.log("\n=== Available Products for Cart ===");
-    products.forEach(product => {
-      console.log(`${product.title}: ${product.stock} in stock, $${product.price}`);
+    products.forEach((product) => {
+      console.log(
+        `${product.title}: ${product.stock} in stock, $${product.price}`
+      );
     });
 
     // Use a test user ID
     const testUserId = "test-user-123";
 
     console.log(`\n=== Adding Items to Cart for Testing ===`);
-    
+
     for (let i = 0; i < Math.min(2, products.length); i++) {
       const product = products[i];
       const quantityToAdd = Math.min(2, product.stock); // Add 2 or max available
-      
+
       console.log(`\nAdding ${quantityToAdd} x ${product.title} to cart...`);
-      
+
       const result = await addItemToCart({
         productId: (product._id as any).toString(),
         quantity: quantityToAdd,
-        userId: testUserId
+        userId: testUserId,
       });
-      
+
       if (result.StatusCode === 200) {
         console.log(`✅ Successfully added to cart`);
       } else {
