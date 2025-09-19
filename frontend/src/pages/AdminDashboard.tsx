@@ -102,15 +102,23 @@ const fetchAdminStats = async (): Promise<AdminStats> => {
   return response.json();
 };
 
-const fetchAllProducts = async (): Promise<Product[]> => {
-  const response = await fetch(`${BASE_URL}/product`, {
-    credentials: "include",
-  });
+interface PaginatedProducts {
+  products: Product[];
+  totalProducts: number;
+  totalPages: number;
+  currentPage: number;
+}
 
+const fetchAllProducts = async (page = 1,limit = 5): Promise<PaginatedProducts> => {
+  const response = await fetch(
+    `${BASE_URL}/product?page=${page}&limit=${limit}`,
+    {
+      credentials: "include",
+    }
+  );
   if (!response.ok) {
     throw new Error("Failed to fetch products");
   }
-
   return response.json();
 };
 
@@ -181,6 +189,8 @@ const AdminDashboard = () => {
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [page, setPage] = useState(1);
+  const [limit] = useState(5); // Change this number to your desired limit
   const queryClient = useQueryClient();
 
   // React Hook Form setup
@@ -211,15 +221,16 @@ const AdminDashboard = () => {
     staleTime: 2 * 60 * 1000, // 2 minutes
   });
 
-  // React Query - Fetch all products
+  // React Query - Fetch paginated products
   const {
-    data: products,
+    data: paginated,
     isLoading: productsLoading,
     error: productsError,
-  } = useQuery({
-    queryKey: ["adminProducts"],
-    queryFn: () => fetchAllProducts(),
-    staleTime: 2 * 60 * 1000, // 2 minutes
+  } = useQuery<PaginatedProducts>({
+    queryKey: ["adminProducts", page, limit],
+    queryFn: () => fetchAllProducts(page, limit),
+    placeholderData: (previousData) => previousData,
+    staleTime: 2 * 60 * 1000,
   });
 
   // React Query - Add product mutation
@@ -461,84 +472,135 @@ const AdminDashboard = () => {
                   {productsError.message || "Failed to load products"}
                 </AlertDescription>
               </Alert>
-            ) : products && products.length > 0 ? (
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Image</TableHead>
-                    <TableHead>Product Name</TableHead>
-                    <TableHead>Price (LYD)</TableHead>
-                    <TableHead>Stock</TableHead>
-                    <TableHead>Sales</TableHead>
-                    <TableHead className="text-center">Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {products.map((product) => (
-                    <TableRow key={product._id}>
-                      <TableCell>
-                        <Avatar className="w-15 h-15">
-                          <AvatarImage
-                            src={product.image}
-                            alt={product.title}
-                          />
-                          <AvatarFallback>
-                            {product.title.charAt(0)}
-                          </AvatarFallback>
-                        </Avatar>
-                      </TableCell>
-                      <TableCell>
-                        <div className="space-y-1">
-                          <div className="font-medium">{product.title}</div>
-                          <div className="text-sm text-gray-500 max-w-[200px] truncate">
-                            {product.description}
-                          </div>
-                        </div>
-                      </TableCell>
-                      <TableCell className="font-medium">
-                        {product.price.toFixed(2)} LYD
-                      </TableCell>
-                      <TableCell>
-                        <Badge
-                          variant={
-                            product.stock > 10
-                              ? "secondary"
-                              : product.stock > 0
-                              ? "outline"
-                              : "destructive"
-                          }
-                        >
-                          {product.stock} units
-                        </Badge>
-                      </TableCell>
-                      <TableCell>{product.salesCount || 0} sales</TableCell>
-                      <TableCell>
-                        <div className="flex justify-center gap-2">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => {
-                              handleEditProduct(product);
-                              setDialogOpen(true);
-                            }}
-                            className="text-blue-600 border-blue-200 hover:bg-blue-50"
-                          >
-                            <Edit className="w-4 h-4" />
-                          </Button>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => handleDeleteProduct(product._id)}
-                            className="text-red-600 border-red-200 hover:bg-red-50"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </Button>
-                        </div>
-                      </TableCell>
-                    </TableRow>
+            ) : paginated && paginated.products.length > 0 ? (
+              <>
+                <div className="min-h-[500px]"> {/* Fixed container height */}
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead className="w-16">Image</TableHead>
+                        <TableHead className="w-64">Product Name</TableHead>
+                        <TableHead className="w-32">Price (LYD)</TableHead>
+                        <TableHead className="w-24">Stock</TableHead>
+                        <TableHead className="w-24">Sales</TableHead>
+                        <TableHead className="w-32 text-center">Actions</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {/* Always render exactly 'limit' number of rows */}
+                      {Array.from({ length: limit }).map((_, index) => {
+                        const product = paginated?.products[index];
+                        if (product) {
+                          return (
+                            <TableRow key={product._id} className="h-16">
+                              <TableCell>
+                                <Avatar className="w-12 h-12">
+                                  <AvatarImage
+                                    src={product.image}
+                                    alt={product.title}
+                                  />
+                                  <AvatarFallback>
+                                    {product.title.charAt(0)}
+                                  </AvatarFallback>
+                                </Avatar>
+                              </TableCell>
+                              <TableCell>
+                                <div className="space-y-1">
+                                  <div className="font-medium">{product.title}</div>
+                                  <div className="text-sm text-gray-500 max-w-[200px] truncate">
+                                    {product.description}
+                                  </div>
+                                </div>
+                              </TableCell>
+                              <TableCell className="font-medium">
+                                {product.price.toFixed(2)} LYD
+                              </TableCell>
+                              <TableCell>
+                                <Badge
+                                  variant={
+                                    product.stock > 10
+                                      ? "secondary"
+                                      : product.stock > 0
+                                      ? "outline"
+                                      : "destructive"
+                                  }
+                                >
+                                  {product.stock} units
+                                </Badge>
+                              </TableCell>
+                              <TableCell>{product.salesCount || 0} sales</TableCell>
+                              <TableCell>
+                                <div className="flex justify-center gap-2">
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => {
+                                      handleEditProduct(product);
+                                      setDialogOpen(true);
+                                    }}
+                                    className="text-blue-600 border-blue-200 hover:bg-blue-50"
+                                  >
+                                    <Edit className="w-4 h-4" />
+                                  </Button>
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => handleDeleteProduct(product._id)}
+                                    className="text-red-600 border-red-200 hover:bg-red-50"
+                                  >
+                                    <Trash2 className="w-4 h-4" />
+                                  </Button>
+                                </div>
+                              </TableCell>
+                            </TableRow>
+                          );
+                        } else {
+                          // Empty row placeholder to maintain table height
+                          return (
+                            <TableRow key={`empty-${index}`} className="h-16">
+                              <TableCell>&nbsp;</TableCell>
+                              <TableCell>&nbsp;</TableCell>
+                              <TableCell>&nbsp;</TableCell>
+                              <TableCell>&nbsp;</TableCell>
+                              <TableCell>&nbsp;</TableCell>
+                              <TableCell>&nbsp;</TableCell>
+                            </TableRow>
+                          );
+                        }
+                      })}
+                    </TableBody>
+                  </Table>
+                </div>
+                {/* Pagination Controls */}
+                <div className="flex justify-center items-center gap-2 mt-6">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    disabled={page === 1}
+                    onClick={() => setPage(page - 1)}
+                  >
+                    Prev
+                  </Button>
+                  {Array.from({ length: paginated.totalPages }, (_, i) => (
+                    <Button
+                      key={i + 1}
+                      variant={page === i + 1 ? "default" : "outline"}
+                      size="sm"
+                      onClick={() => setPage(i + 1)}
+                    >
+                      {i + 1}
+                    </Button>
                   ))}
-                </TableBody>
-              </Table>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    disabled={page === paginated.totalPages}
+                    onClick={() => setPage(page + 1)}
+                  >
+                    Next
+                  </Button>
+                </div>
+              </>
             ) : (
               <Alert>
                 <AlertDescription>

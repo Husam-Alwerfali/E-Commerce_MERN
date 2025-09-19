@@ -1,7 +1,16 @@
 import productModel from "../src/models/productModel.js";
 
-export const getAllProducts = async () => {
-  return await productModel.find();
+export const getAllProducts = async (page = 1, limit = 10) => {
+  const skip = (page - 1) * limit;
+  const products = await productModel.find().skip(skip).limit(limit);
+  const totalProducts = await productModel.countDocuments();
+  const totalPages = Math.ceil(totalProducts / limit);
+  return {
+    products,
+    totalProducts,
+    totalPages,
+    currentPage: page,
+  };
 };
 
 export const getProductById = async (id: string) => {
@@ -96,8 +105,8 @@ export const seedInitialProducts = async () => {
       },
     ];
 
-    const existingProducts = await getAllProducts();
-    if (existingProducts.length === 0) {
+    const existingProductsResult = await getAllProducts(1, 1_000_000);
+    if (existingProductsResult.products.length === 0) {
       await productModel.insertMany(products);
     }
   } catch (err) {

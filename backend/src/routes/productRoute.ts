@@ -16,8 +16,10 @@ const router = express.Router();
 // GET /products - Get all products (public route)
 router.get("/", async (req, res) => {
   try {
-    const products = await getAllProducts();
-    res.status(200).json(products);
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = parseInt(req.query.limit as string) || 10;
+    const result = await getAllProducts(page, limit);
+    res.status(200).json(result);
   } catch (err) {
     res.status(500).json({ error: "Something went wrong" });
   }

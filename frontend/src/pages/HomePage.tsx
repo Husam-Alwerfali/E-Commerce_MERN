@@ -16,7 +16,7 @@ const HomePage = () => {
         setLoading(true);
         const response = await fetch(`${BASE_URL}/product`);
         const data = await response.json();
-        setProducts(data);
+        setProducts(data.products || []);
       } catch {
         setError(true);
       } finally {
