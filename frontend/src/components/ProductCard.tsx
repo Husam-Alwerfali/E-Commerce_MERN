@@ -4,6 +4,7 @@ import { Badge } from "./ui/badge";
 import { ShoppingCart } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "../context/Cart/CartContext";
+import { useAuth } from "../context/Auth/AuthContext";
 
 interface Props {
   _id: string;
@@ -21,6 +22,7 @@ export default function ProductCard({
   stock,
 }: Props) {
   const { addToCart } = useCart();
+  const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
 
   const handleCardClick = () => {
@@ -29,6 +31,15 @@ export default function ProductCard({
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.stopPropagation(); // Prevent card click when clicking add to cart
+
+    // Check if user is authenticated
+    if (!isAuthenticated) {
+      // Redirect to login page if not authenticated
+      navigate("/login");
+      return;
+    }
+
+    // Add to cart if user is authenticated
     addToCart(_id);
   };
 

@@ -109,7 +109,10 @@ interface PaginatedProducts {
   currentPage: number;
 }
 
-const fetchAllProducts = async (page = 1,limit = 5): Promise<PaginatedProducts> => {
+const fetchAllProducts = async (
+  page = 1,
+  limit = 5
+): Promise<PaginatedProducts> => {
   const response = await fetch(
     `${BASE_URL}/product?page=${page}&limit=${limit}`,
     {
@@ -474,7 +477,9 @@ const AdminDashboard = () => {
               </Alert>
             ) : paginated && paginated.products.length > 0 ? (
               <>
-                <div className="min-h-[500px]"> {/* Fixed container height */}
+                <div className="min-h-[500px]">
+                  {" "}
+                  {/* Fixed container height */}
                   <Table>
                     <TableHeader>
                       <TableRow>
@@ -483,7 +488,9 @@ const AdminDashboard = () => {
                         <TableHead className="w-32">Price (LYD)</TableHead>
                         <TableHead className="w-24">Stock</TableHead>
                         <TableHead className="w-24">Sales</TableHead>
-                        <TableHead className="w-32 text-center">Actions</TableHead>
+                        <TableHead className="w-32 text-center">
+                          Actions
+                        </TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -506,7 +513,9 @@ const AdminDashboard = () => {
                               </TableCell>
                               <TableCell>
                                 <div className="space-y-1">
-                                  <div className="font-medium">{product.title}</div>
+                                  <div className="font-medium">
+                                    {product.title}
+                                  </div>
                                   <div className="text-sm text-gray-500 max-w-[200px] truncate">
                                     {product.description}
                                   </div>
@@ -528,7 +537,9 @@ const AdminDashboard = () => {
                                   {product.stock} units
                                 </Badge>
                               </TableCell>
-                              <TableCell>{product.salesCount || 0} sales</TableCell>
+                              <TableCell>
+                                {product.salesCount || 0} sales
+                              </TableCell>
                               <TableCell>
                                 <div className="flex justify-center gap-2">
                                   <Button
@@ -545,7 +556,9 @@ const AdminDashboard = () => {
                                   <Button
                                     variant="outline"
                                     size="sm"
-                                    onClick={() => handleDeleteProduct(product._id)}
+                                    onClick={() =>
+                                      handleDeleteProduct(product._id)
+                                    }
                                     className="text-red-600 border-red-200 hover:bg-red-50"
                                   >
                                     <Trash2 className="w-4 h-4" />

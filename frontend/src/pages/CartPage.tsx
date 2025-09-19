@@ -125,7 +125,7 @@ const CartPage = () => {
                 <Button
                   onClick={handelClearCart}
                   variant="outline"
-                  className="text-white border-white/30 hover:border-white hover:bg-white/10"
+                  className="text-purple-500 border-purple-300 hover:bg-red-50 hover:border-red-500 hover:text-red-600 bg-white/90"
                 >
                   <RotateCcw className="w-4 h-4 mr-2" />
                   Clear All

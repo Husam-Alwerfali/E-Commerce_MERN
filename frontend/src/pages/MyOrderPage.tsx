@@ -187,7 +187,7 @@ const MyOrderPage = () => {
                         <div className="flex items-center gap-4 mb-4">
                           <Avatar className="w-12 h-12 bg-blue-500">
                             <AvatarFallback>
-                              <MapPin className="w-6 h-6 text-white" />
+                              <MapPin className="w-6 h-6 " />
                             </AvatarFallback>
                           </Avatar>
                           <h4 className="text-lg font-bold text-blue-700">
@@ -205,7 +205,7 @@ const MyOrderPage = () => {
                         <div className="flex items-center gap-4 mb-4">
                           <Avatar className="w-12 h-12 bg-purple-500">
                             <AvatarFallback>
-                              <Package className="w-6 h-6 text-white" />
+                              <Package className="w-6 h-6 " />
                             </AvatarFallback>
                           </Avatar>
                           <h4 className="text-lg font-bold text-purple-700">
