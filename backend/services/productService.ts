@@ -19,6 +19,20 @@ export const createProduct = async (productData: {
   return await product.save();
 };
 
+export const updateProduct = async (id: string, productData: {
+  title?: string;
+  description?: string;
+  price?: number;
+  image?: string;
+  stock?: number;
+}) => {
+  return await productModel.findByIdAndUpdate(id, productData, { new: true });
+};
+
+export const deleteProduct = async (id: string) => {
+  return await productModel.findByIdAndDelete(id);
+};
+
 export const getAdminStats = async () => {
   try {
     // Get total products count

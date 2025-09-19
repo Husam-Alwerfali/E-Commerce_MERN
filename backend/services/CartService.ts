@@ -96,7 +96,10 @@ export const addItemToCart = async ({
   }
 
   if (product.stock < quantity) {
-    return { data: "Low stock for item", StatusCode: 400 };
+    return { 
+      data: `Insufficient stock for ${product.title}. Available: ${product.stock}, Requested: ${quantity}`, 
+      StatusCode: 400 
+    };
   }
 
   cart.items.push({
@@ -137,7 +140,10 @@ export const updateItemInCart = async ({
   }
 
   if (product.stock < quantity) {
-    return { data: "Low stock for item", StatusCode: 400 };
+    return { 
+      data: `Insufficient stock for ${product.title}. Available: ${product.stock}, Requested: ${quantity}`, 
+      StatusCode: 400 
+    };
   }
 
   const otherCartItems = cart.items.filter(
@@ -212,6 +218,14 @@ export const checkoutCart = async ({ userId, address }: CheckoutCart) => {
       return { data: "Product not found", StatusCode: 400 };
     }
 
+    // Check if there's enough stock before checkout
+    if (product.stock < item.quantity) {
+      return { 
+        data: `Insufficient stock for ${product.title}. Available: ${product.stock}, Requested: ${item.quantity}`, 
+        StatusCode: 400 
+      };
+    }
+
     const orderItem: IOrderItem = {
       productTitle: product.title,
       image: product.image,
@@ -221,8 +235,9 @@ export const checkoutCart = async ({ userId, address }: CheckoutCart) => {
 
     orderItems.push(orderItem);
 
-    // Update salesCount for the product
-    product.salesCount += item.quantity;
+    // Update stock and salesCount for the product
+    product.stock -= item.quantity; // Decrease stock
+    product.salesCount += item.quantity; // Increase sales count
     await product.save();
   }
 

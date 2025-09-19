@@ -3,6 +3,8 @@ import {
   getAllProducts,
   getProductById,
   createProduct,
+  updateProduct,
+  deleteProduct,
   getAdminStats,
 } from "../../services/productService.js";
 import validateJWT from "../../middlewares/ValidatwJWT.js";
@@ -88,6 +90,84 @@ router.get(
     } catch (err) {
       console.error("Error getting admin stats:", err);
       res.status(500).json({ error: "Failed to fetch admin statistics" });
+    }
+  }
+);
+
+// PUT /admin/product/:id - Update product (admin only)
+router.put(
+  "/admin/product/:id",
+  validateJWT,
+  isAdmin,
+  async (req: ExtendRequest, res) => {
+    try {
+      const { id } = req.params;
+      const { name, description, price, image, stock } = req.body;
+
+      // Validate ID
+      if (!id) {
+        return res.status(400).json({ error: "Product ID is required" });
+      }
+
+      // Validation
+      if (!name || !description || !price || !image || stock === undefined) {
+        return res.status(400).json({ error: "All fields are required" });
+      }
+
+      if (price <= 0 || stock < 0) {
+        return res
+          .status(400)
+          .json({
+            error: "Price must be positive and stock cannot be negative",
+          });
+      }
+
+      const productData = {
+        title: name, // Using 'title' to match existing schema
+        description,
+        price: Number(price),
+        image,
+        stock: Number(stock),
+      };
+
+      const product = await updateProduct(id, productData);
+      
+      if (!product) {
+        return res.status(404).json({ error: "Product not found" });
+      }
+
+      res.status(200).json(product);
+    } catch (err) {
+      console.error("Error updating product:", err);
+      res.status(500).json({ error: "Failed to update product" });
+    }
+  }
+);
+
+// DELETE /admin/product/:id - Delete product (admin only)
+router.delete(
+  "/admin/product/:id",
+  validateJWT,
+  isAdmin,
+  async (req: ExtendRequest, res) => {
+    try {
+      const { id } = req.params;
+
+      // Validate ID
+      if (!id) {
+        return res.status(400).json({ error: "Product ID is required" });
+      }
+
+      const product = await deleteProduct(id);
+      
+      if (!product) {
+        return res.status(404).json({ error: "Product not found" });
+      }
+
+      res.status(200).json({ message: "Product deleted successfully", product });
+    } catch (err) {
+      console.error("Error deleting product:", err);
+      res.status(500).json({ error: "Failed to delete product" });
     }
   }
 );
