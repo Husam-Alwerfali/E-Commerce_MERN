@@ -1,30 +1,22 @@
-import * as React from "react";
-import AppBar from "@mui/material/AppBar";
-import Box from "@mui/material/Box";
-import Toolbar from "@mui/material/Toolbar";
-import IconButton from "@mui/material/IconButton";
-import Typography from "@mui/material/Typography";
-import Menu from "@mui/material/Menu";
-import Avatar from "@mui/material/Avatar";
-import Tooltip from "@mui/material/Tooltip";
-import MenuItem from "@mui/material/MenuItem";
-import ShoppingCart from "@mui/icons-material/ShoppingCart";
+import { Button } from "./ui/button";
+import { Badge } from "./ui/badge";
+import { Avatar, AvatarFallback } from "./ui/avatar";
 import {
-  Button,
-  Container,
-  Badge,
-  Chip,
-  Divider,
-  ListItemIcon,
-  Fade,
-} from "@mui/material";
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "./ui/dropdown-menu";
 import {
+  ShoppingCart,
   Store,
-  AccountCircle,
-  Logout,
+  User,
+  LogOut,
   ShoppingBag,
-  Login,
-} from "@mui/icons-material";
+  LogIn,
+  Settings,
+} from "lucide-react";
 import { useAuth } from "../context/Auth/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "../context/Cart/CartContext";
@@ -33,35 +25,22 @@ function Navbar() {
   const { username, isAuthenticated, userRole, isLoadingAuth, logout } =
     useAuth();
   const { cartItems } = useCart();
-  const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(
-    null
-  );
   const navigate = useNavigate();
 
-  const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorElUser(event.currentTarget);
-  };
-
-  const handleCloseUserMenu = () => {
-    setAnchorElUser(null);
-  };
-
-  const handelLogin = () => {
+  const handleLogin = () => {
     navigate("/login");
   };
 
-  const handelMyOrders = () => {
+  const handleMyOrders = () => {
     navigate("/my-orders");
-    handleCloseUserMenu();
   };
 
-  const handelLogout = () => {
+  const handleLogout = () => {
     logout();
-    handleCloseUserMenu();
     navigate("/");
   };
 
-  const handelCart = () => {
+  const handleCart = () => {
     navigate("/cart");
   };
 
@@ -69,306 +48,122 @@ function Navbar() {
   const displayName = username?.split("@")[0] || username;
 
   return (
-    <AppBar
-      position="static"
-      elevation={0}
-      sx={{
-        background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-        borderBottom: "1px solid rgba(255,255,255,0.1)",
-        backdropFilter: "blur(10px)",
-      }}
-    >
-      <Container maxWidth={false}>
-        <Toolbar
-          disableGutters
-          sx={{
-            minHeight: { xs: 64, sm: 70 },
-            py: 1,
-          }}
-        >
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "row",
-              justifyContent: "space-between",
-              alignItems: "center",
-              width: "100%",
-            }}
+    <header className="bg-gradient-to-r from-blue-600 to-purple-600 border-b border-white/10 backdrop-blur-sm">
+      <div className="container mx-auto px-4">
+        <div className="flex items-center justify-between h-16 md:h-18">
+          {/* Logo Section */}
+          <Button
+            variant="ghost"
+            onClick={() => navigate("/")}
+            className="text-white hover:bg-white/10 hover:scale-105 transition-all duration-200 rounded-lg px-4 py-2"
           >
-            {/* Logo Section */}
+            <div className="flex items-center gap-3">
+              <Store className="w-7 h-7 md:w-8 md:h-8 text-white drop-shadow-sm" />
+              <span className="hidden sm:block text-xl md:text-2xl font-bold bg-gradient-to-r from-white to-gray-100 bg-clip-text text-transparent tracking-wide">
+                TopShop
+              </span>
+            </div>
+          </Button>
+
+          {/* Right Section */}
+          <div className="flex items-center gap-2 md:gap-4">
+            {/* Cart Icon */}
             <Button
-              variant="text"
-              onClick={() => navigate("/")}
-              sx={{
-                color: "white",
-                textTransform: "none",
-                "&:hover": {
-                  backgroundColor: "rgba(255,255,255,0.1)",
-                  transform: "scale(1.02)",
-                },
-                transition: "all 0.2s ease-in-out",
-                borderRadius: 2,
-                px: 2,
-                py: 1,
-              }}
+              variant="ghost"
+              size="icon"
+              onClick={handleCart}
+              className="text-white hover:bg-white/15 hover:scale-110 transition-all duration-200 relative p-2 md:p-3"
             >
-              <Box
-                sx={{
-                  display: "flex",
-                  flexDirection: "row",
-                  alignItems: "center",
-                  gap: 1.5,
-                }}
-              >
-                <Store
-                  sx={{
-                    fontSize: { xs: 28, sm: 32 },
-                    color: "white",
-                    filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.2))",
-                  }}
-                />
-                <Typography
-                  variant="h5"
-                  noWrap
-                  component="div"
-                  sx={{
-                    display: { xs: "none", sm: "flex" },
-                    fontFamily: '"Poppins", "Roboto", sans-serif',
-                    fontWeight: 700,
-                    fontSize: { sm: "1.5rem", md: "1.7rem" },
-                    background:
-                      "linear-gradient(45deg, #ffffff 30%, #f0f0f0 90%)",
-                    backgroundClip: "text",
-                    WebkitBackgroundClip: "text",
-                    WebkitTextFillColor: "transparent",
-                    textShadow: "0 2px 4px rgba(0,0,0,0.1)",
-                    letterSpacing: "0.5px",
-                  }}
-                >
-                  TopShop
-                </Typography>
-              </Box>
+              <div className="relative">
+                <ShoppingCart className="w-5 h-5 md:w-6 md:h-6" />
+                {cartItems.length > 0 && (
+                  <Badge
+                    variant="destructive"
+                    className="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center text-xs font-bold bg-red-500 hover:bg-red-500 shadow-lg"
+                  >
+                    {cartItems.length}
+                  </Badge>
+                )}
+              </div>
             </Button>
 
-            {/* Right Section */}
-            <Box
-              sx={{
-                flexGrow: 0,
-                display: "flex",
-                alignItems: "center",
-                gap: { xs: 1, sm: 2 },
-              }}
-            >
-              {/* Cart Icon */}
-              <Tooltip title="View Cart" arrow>
-                <IconButton
-                  onClick={handelCart}
-                  sx={{
-                    color: "white",
-                    "&:hover": {
-                      backgroundColor: "rgba(255,255,255,0.15)",
-                      transform: "scale(1.1)",
-                    },
-                    transition: "all 0.2s ease-in-out",
-                    p: { xs: 1, sm: 1.5 },
-                  }}
-                >
-                  <Badge
-                    badgeContent={cartItems.length}
-                    color="error"
-                    sx={{
-                      "& .MuiBadge-badge": {
-                        fontSize: "0.75rem",
-                        minWidth: "18px",
-                        height: "18px",
-                        background:
-                          "linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%)",
-                        boxShadow: "0 2px 8px rgba(255,107,107,0.4)",
-                      },
-                    }}
-                  >
-                    <ShoppingCart sx={{ fontSize: { xs: 22, sm: 24 } }} />
-                  </Badge>
-                </IconButton>
-              </Tooltip>
+            {/* User Section */}
+            {isAuthenticated ? (
+              <div className="flex items-center gap-2">
+                {/* Welcome Message - Hidden on mobile */}
+                <div className="hidden md:flex items-center bg-white/15 backdrop-blur-sm rounded-full px-3 py-1 border border-white/20">
+                  <User className="w-4 h-4 text-white mr-2" />
+                  <span className="text-white font-medium text-sm">
+                    Welcome, {displayName}
+                  </span>
+                </div>
 
-              {/* User Section */}
-              {isAuthenticated ? (
-                <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                  {/* Welcome Chip - Hidden on mobile */}
-                  <Chip
-                    label={`Welcome, ${displayName}`}
-                    avatar={<AccountCircle />}
-                    sx={{
-                      display: { xs: "none", md: "flex" },
-                      background: "rgba(255,255,255,0.15)",
-                      color: "white",
-                      fontWeight: 500,
-                      backdropFilter: "blur(10px)",
-                      border: "1px solid rgba(255,255,255,0.2)",
-                      "& .MuiChip-avatar": {
-                        color: "white",
-                      },
-                    }}
-                  />
-
-                  <Tooltip title="Account Settings" arrow>
-                    <IconButton
-                      onClick={handleOpenUserMenu}
-                      sx={{
-                        p: 0.5,
-                        "&:hover": {
-                          transform: "scale(1.05)",
-                        },
-                        transition: "all 0.2s ease-in-out",
-                      }}
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="hover:scale-105 transition-all duration-200 p-1"
                     >
-                      <Avatar
-                        alt={displayName || ""}
-                        sx={{
-                          width: { xs: 35, sm: 40 },
-                          height: { xs: 35, sm: 40 },
-                          background:
-                            "linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%)",
-                          border: "2px solid rgba(255,255,255,0.3)",
-                          boxShadow: "0 4px 12px rgba(0,0,0,0.2)",
-                          fontSize: "1rem",
-                          fontWeight: 600,
-                        }}
-                      >
-                        {displayName?.charAt(0).toUpperCase()}
+                      <Avatar className="w-8 h-8 md:w-10 md:h-10 border-2 border-white/30 shadow-lg">
+                        <AvatarFallback className="bg-gradient-to-r from-red-500 to-pink-500 text-white font-semibold">
+                          {displayName?.charAt(0).toUpperCase()}
+                        </AvatarFallback>
                       </Avatar>
-                    </IconButton>
-                  </Tooltip>
+                    </Button>
+                  </DropdownMenuTrigger>
 
-                  <Menu
-                    sx={{
-                      mt: "50px",
-                      "& .MuiPaper-root": {
-                        background: "rgba(255,255,255,0.95)",
-                        backdropFilter: "blur(20px)",
-                        borderRadius: 3,
-                        border: "1px solid rgba(255,255,255,0.2)",
-                        boxShadow: "0 8px 32px rgba(0,0,0,0.1)",
-                        minWidth: 180,
-                      },
-                    }}
-                    id="menu-appbar"
-                    anchorEl={anchorElUser}
-                    anchorOrigin={{
-                      vertical: "top",
-                      horizontal: "right",
-                    }}
-                    keepMounted
-                    transformOrigin={{
-                      vertical: "top",
-                      horizontal: "right",
-                    }}
-                    open={Boolean(anchorElUser)}
-                    onClose={handleCloseUserMenu}
-                    TransitionComponent={Fade}
+                  <DropdownMenuContent
+                    className="w-48 bg-white/95 backdrop-blur-md border border-white/20 shadow-xl rounded-lg"
+                    align="end"
                   >
                     {!isLoadingAuth && userRole === "admin" && (
                       <>
-                        <MenuItem
-                          onClick={() => {
-                            navigate("/admin");
-                            handleCloseUserMenu();
-                          }}
-                          sx={{
-                            gap: 1.5,
-                            py: 1.5,
-                            px: 2,
-                            "&:hover": {
-                              background:
-                                "linear-gradient(135deg, rgba(102,126,234,0.1) 0%, rgba(118,75,162,0.1) 100%)",
-                            },
-                          }}
+                        <DropdownMenuItem
+                          onClick={() => navigate("/admin")}
+                          className="gap-3 py-3 px-4 hover:bg-blue-50 transition-colors cursor-pointer"
                         >
-                          <ListItemIcon>
-                            <Store sx={{ color: "#667eea" }} />
-                          </ListItemIcon>
-                          <Typography sx={{ fontWeight: 500 }}>
-                            Admin Dashboard
-                          </Typography>
-                        </MenuItem>
-                        <Divider sx={{ mx: 1, opacity: 0.3 }} />
+                          <Settings className="w-4 h-4 text-blue-600" />
+                          <span className="font-medium">Admin Dashboard</span>
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator className="bg-gray-200" />
                       </>
                     )}
 
-                    <MenuItem
-                      onClick={handelMyOrders}
-                      sx={{
-                        gap: 1.5,
-                        py: 1.5,
-                        px: 2,
-                        "&:hover": {
-                          background:
-                            "linear-gradient(135deg, rgba(102,126,234,0.1) 0%, rgba(118,75,162,0.1) 100%)",
-                        },
-                      }}
+                    <DropdownMenuItem
+                      onClick={handleMyOrders}
+                      className="gap-3 py-3 px-4 hover:bg-blue-50 transition-colors cursor-pointer"
                     >
-                      <ListItemIcon>
-                        <ShoppingBag sx={{ color: "#667eea" }} />
-                      </ListItemIcon>
-                      <Typography sx={{ fontWeight: 500 }}>
-                        My Orders
-                      </Typography>
-                    </MenuItem>
+                      <ShoppingBag className="w-4 h-4 text-blue-600" />
+                      <span className="font-medium">My Orders</span>
+                    </DropdownMenuItem>
 
-                    <Divider sx={{ mx: 1, opacity: 0.3 }} />
+                    <DropdownMenuSeparator className="bg-gray-200" />
 
-                    <MenuItem
-                      onClick={handelLogout}
-                      sx={{
-                        gap: 1.5,
-                        py: 1.5,
-                        px: 2,
-                        "&:hover": {
-                          background:
-                            "linear-gradient(135deg, rgba(255,107,107,0.1) 0%, rgba(238,90,82,0.1) 100%)",
-                        },
-                      }}
+                    <DropdownMenuItem
+                      onClick={handleLogout}
+                      className="gap-3 py-3 px-4 hover:bg-red-50 transition-colors cursor-pointer"
                     >
-                      <ListItemIcon>
-                        <Logout sx={{ color: "#ff6b6b" }} />
-                      </ListItemIcon>
-                      <Typography sx={{ fontWeight: 500 }}>Logout</Typography>
-                    </MenuItem>
-                  </Menu>
-                </Box>
-              ) : (
-                <Button
-                  variant="contained"
-                  startIcon={<Login />}
-                  onClick={handelLogin}
-                  sx={{
-                    background: "rgba(255,255,255,0.15)",
-                    color: "white",
-                    fontWeight: 600,
-                    textTransform: "none",
-                    px: { xs: 2, sm: 3 },
-                    py: 1,
-                    borderRadius: 3,
-                    border: "1px solid rgba(255,255,255,0.2)",
-                    backdropFilter: "blur(10px)",
-                    fontSize: { xs: "0.85rem", sm: "0.95rem" },
-                    "&:hover": {
-                      background: "rgba(255,255,255,0.25)",
-                      transform: "translateY(-2px)",
-                      boxShadow: "0 6px 16px rgba(0,0,0,0.2)",
-                    },
-                    transition: "all 0.3s ease-in-out",
-                  }}
-                >
-                  Login
-                </Button>
-              )}
-            </Box>
-          </Box>
-        </Toolbar>
-      </Container>
-    </AppBar>
+                      <LogOut className="w-4 h-4 text-red-600" />
+                      <span className="font-medium text-red-600">Logout</span>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+            ) : (
+              <Button
+                onClick={handleLogin}
+                className="bg-white/15 hover:bg-white/25 text-white font-semibold px-4 md:px-6 py-2 rounded-lg border border-white/20 backdrop-blur-sm hover:-translate-y-0.5 hover:shadow-lg transition-all duration-300"
+              >
+                <LogIn className="w-4 h-4 mr-2" />
+                Login
+              </Button>
+            )}
+          </div>
+        </div>
+      </div>
+    </header>
   );
 }
+
 export default Navbar;

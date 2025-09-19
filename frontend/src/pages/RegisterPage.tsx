@@ -1,34 +1,23 @@
-import {
-  Box,
-  Typography,
-  Container,
-  TextField,
-  Button,
-  Paper,
-  Card,
-  CardContent,
-  Alert,
-  InputAdornment,
-  IconButton,
-  Divider,
-  Chip,
-  Fade,
-  CircularProgress,
-  Grid,
-} from "@mui/material";
-import {
-  Person,
-  Email,
-  Lock,
-  Visibility,
-  VisibilityOff,
-  PersonAdd,
-  Login as LoginIcon,
-} from "@mui/icons-material";
 import { useRef, useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import {
+  User,
+  Mail,
+  Lock,
+  Eye,
+  EyeOff,
+  UserPlus,
+  LogIn,
+  Loader2,
+} from "lucide-react";
+import { Card, CardContent } from "../components/ui/card";
+import { Button } from "../components/ui/button";
+import { Input } from "../components/ui/input";
+import { Label } from "../components/ui/label";
+import { Alert, AlertDescription } from "../components/ui/alert";
+import { Separator } from "../components/ui/separator";
 import { BASE_URL } from "../api/baseUrl";
 import { useAuth } from "../context/Auth/AuthContext";
-import { useNavigate } from "react-router-dom";
 import { redirectBasedOnRole } from "../utils/roleUtils";
 
 const RegisterPage = () => {
@@ -123,318 +112,147 @@ const RegisterPage = () => {
   };
 
   return (
-    <Box
-      sx={{
-        minHeight: "100vh",
-        background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-        display: "flex",
-        alignItems: "center",
-        py: 4,
-      }}
-    >
-      <Container maxWidth="md">
-        <Fade in timeout={800}>
-          <Card
-            sx={{
-              borderRadius: 4,
-              boxShadow: "0 20px 60px rgba(0,0,0,0.1)",
-              overflow: "hidden",
-              background: "rgba(255,255,255,0.95)",
-              backdropFilter: "blur(20px)",
-              border: "1px solid rgba(255,255,255,0.2)",
-            }}
-          >
-            {/* Header Section */}
-            <Paper
-              sx={{
-                background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-                color: "white",
-                p: 4,
-                textAlign: "center",
-                borderRadius: 0,
-              }}
-            >
-              <PersonAdd sx={{ fontSize: 60, mb: 2, opacity: 0.9 }} />
-              <Typography
-                variant="h4"
-                sx={{
-                  fontWeight: 700,
-                  mb: 1,
-                  textShadow: "0 2px 4px rgba(0,0,0,0.3)",
-                }}
-              >
-                Create Account
-              </Typography>
-              <Typography
-                variant="body1"
-                sx={{
-                  opacity: 0.9,
-                  fontSize: "1.1rem",
-                }}
-              >
-                Join TopShop and start shopping today
-              </Typography>
-            </Paper>
+    <div className="min-h-screen bg-gradient-to-br from-blue-500 to-purple-600 flex items-center py-8">
+      <div className="container max-w-2xl mx-auto px-4">
+        <Card className="rounded-2xl shadow-2xl overflow-hidden bg-white/95 backdrop-blur-sm border border-white/20">
+          {/* Header Section */}
+          <div className="bg-gradient-to-r from-blue-500 to-purple-600 text-white p-8 text-center">
+            <UserPlus className="w-16 h-16 mx-auto mb-4 opacity-90" />
+            <h1 className="text-4xl font-bold mb-2 text-shadow">
+              Create Account
+            </h1>
+            <p className="text-lg opacity-90">
+              Join TopShop and start shopping today
+            </p>
+          </div>
 
-            <CardContent sx={{ p: 4 }}>
-              {/* Registration Form */}
-              <Box component="form" sx={{ mt: 2 }}>
-                {/* Name Fields Row */}
-                <Grid container spacing={3} sx={{ mb: 3 }}>
-                  <Grid size={{ xs: 12, sm: 6 }}>
-                    <TextField
-                      inputRef={firstNameRef}
-                      label="First Name"
-                      name="firstName"
-                      variant="outlined"
-                      fullWidth
-                      InputProps={{
-                        startAdornment: (
-                          <InputAdornment position="start">
-                            <Person sx={{ color: "#667eea" }} />
-                          </InputAdornment>
-                        ),
-                      }}
-                      InputLabelProps={{
-                        sx: { color: "#667eea" },
-                      }}
-                      sx={{
-                        "& .MuiOutlinedInput-root": {
-                          "& fieldset": {
-                            borderColor: "rgba(102, 126, 234, 0.3)",
-                          },
-                          "&:hover fieldset": {
-                            borderColor: "#667eea",
-                          },
-                          "&.Mui-focused fieldset": {
-                            borderColor: "#667eea",
-                          },
-                        },
-                      }}
+          <CardContent className="p-8">
+            {/* Registration Form */}
+            <div className="space-y-6">
+              {/* Name Fields Row */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="firstName">First Name</Label>
+                  <div className="relative">
+                    <User className="absolute left-3 top-3 h-4 w-4 text-blue-500" />
+                    <Input
+                      id="firstName"
+                      ref={firstNameRef}
+                      placeholder="Enter your first name"
+                      className="pl-10"
                     />
-                  </Grid>
-                  <Grid size={{ xs: 12, sm: 6 }}>
-                    <TextField
-                      inputRef={lastNameRef}
-                      label="Last Name"
-                      name="lastName"
-                      variant="outlined"
-                      fullWidth
-                      InputProps={{
-                        startAdornment: (
-                          <InputAdornment position="start">
-                            <Person sx={{ color: "#667eea" }} />
-                          </InputAdornment>
-                        ),
-                      }}
-                      InputLabelProps={{
-                        sx: { color: "#667eea" },
-                      }}
-                      sx={{
-                        "& .MuiOutlinedInput-root": {
-                          "& fieldset": {
-                            borderColor: "rgba(102, 126, 234, 0.3)",
-                          },
-                          "&:hover fieldset": {
-                            borderColor: "#667eea",
-                          },
-                          "&.Mui-focused fieldset": {
-                            borderColor: "#667eea",
-                          },
-                        },
-                      }}
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="lastName">Last Name</Label>
+                  <div className="relative">
+                    <User className="absolute left-3 top-3 h-4 w-4 text-blue-500" />
+                    <Input
+                      id="lastName"
+                      ref={lastNameRef}
+                      placeholder="Enter your last name"
+                      className="pl-10"
                     />
-                  </Grid>
-                </Grid>
+                  </div>
+                </div>
+              </div>
 
-                {/* Email Field */}
-                <TextField
-                  inputRef={emailRef}
-                  label="Email Address"
-                  name="email"
-                  type="email"
-                  variant="outlined"
-                  fullWidth
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <Email sx={{ color: "#667eea" }} />
-                      </InputAdornment>
-                    ),
-                  }}
-                  InputLabelProps={{
-                    sx: { color: "#667eea" },
-                  }}
-                  sx={{
-                    mb: 3,
-                    "& .MuiOutlinedInput-root": {
-                      "& fieldset": {
-                        borderColor: "rgba(102, 126, 234, 0.3)",
-                      },
-                      "&:hover fieldset": {
-                        borderColor: "#667eea",
-                      },
-                      "&.Mui-focused fieldset": {
-                        borderColor: "#667eea",
-                      },
-                    },
-                  }}
-                />
-
-                {/* Password Field */}
-                <TextField
-                  inputRef={passwordRef}
-                  label="Password"
-                  name="password"
-                  type={showPassword ? "text" : "password"}
-                  variant="outlined"
-                  fullWidth
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <Lock sx={{ color: "#667eea" }} />
-                      </InputAdornment>
-                    ),
-                    endAdornment: (
-                      <InputAdornment position="end">
-                        <IconButton
-                          aria-label="toggle password visibility"
-                          onClick={handleClickShowPassword}
-                          edge="end"
-                          sx={{ color: "#667eea" }}
-                        >
-                          {showPassword ? <VisibilityOff /> : <Visibility />}
-                        </IconButton>
-                      </InputAdornment>
-                    ),
-                  }}
-                  InputLabelProps={{
-                    sx: { color: "#667eea" },
-                  }}
-                  sx={{
-                    mb: 3,
-                    "& .MuiOutlinedInput-root": {
-                      "& fieldset": {
-                        borderColor: "rgba(102, 126, 234, 0.3)",
-                      },
-                      "&:hover fieldset": {
-                        borderColor: "#667eea",
-                      },
-                      "&.Mui-focused fieldset": {
-                        borderColor: "#667eea",
-                      },
-                    },
-                  }}
-                />
-
-                {/* Error Alert */}
-                {error && (
-                  <Fade in timeout={300}>
-                    <Alert
-                      severity="error"
-                      sx={{
-                        mb: 3,
-                        borderRadius: 2,
-                        "& .MuiAlert-icon": {
-                          color: "#ff6b6b",
-                        },
-                      }}
-                    >
-                      {error}
-                    </Alert>
-                  </Fade>
-                )}
-
-                {/* Register Button */}
-                <Button
-                  onClick={onSubmit}
-                  variant="contained"
-                  size="large"
-                  fullWidth
-                  disabled={loading}
-                  startIcon={
-                    loading ? (
-                      <CircularProgress size={20} color="inherit" />
-                    ) : (
-                      <PersonAdd />
-                    )
-                  }
-                  sx={{
-                    py: 1.8,
-                    background:
-                      "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-                    fontWeight: 600,
-                    fontSize: "1.1rem",
-                    textTransform: "none",
-                    borderRadius: 3,
-                    mb: 3,
-                    "&:hover": {
-                      background:
-                        "linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%)",
-                      transform: "translateY(-2px)",
-                      boxShadow: "0 6px 20px rgba(102,126,234,0.4)",
-                    },
-                    "&:disabled": {
-                      background: "rgba(102,126,234,0.6)",
-                    },
-                    transition: "all 0.3s ease-in-out",
-                  }}
-                >
-                  {loading ? "Creating Account..." : "Create Account"}
-                </Button>
-
-                {/* Divider */}
-                <Divider sx={{ mb: 3 }}>
-                  <Chip
-                    label="or"
-                    sx={{
-                      bgcolor: "transparent",
-                      color: "text.secondary",
-                      fontWeight: 500,
-                    }}
+              {/* Email Field */}
+              <div className="space-y-2">
+                <Label htmlFor="email">Email Address</Label>
+                <div className="relative">
+                  <Mail className="absolute left-3 top-3 h-4 w-4 text-blue-500" />
+                  <Input
+                    id="email"
+                    ref={emailRef}
+                    type="email"
+                    placeholder="Enter your email address"
+                    className="pl-10"
                   />
-                </Divider>
+                </div>
+              </div>
 
-                {/* Login Link */}
-                <Box sx={{ textAlign: "center" }}>
-                  <Typography
-                    variant="body2"
-                    color="text.secondary"
-                    sx={{ mb: 2 }}
+              {/* Password Field */}
+              <div className="space-y-2">
+                <Label htmlFor="password">Password</Label>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-3 h-4 w-4 text-blue-500" />
+                  <Input
+                    id="password"
+                    ref={passwordRef}
+                    type={showPassword ? "text" : "password"}
+                    placeholder="Enter your password"
+                    className="pl-10 pr-12"
+                  />
+                  <button
+                    type="button"
+                    onClick={handleClickShowPassword}
+                    className="absolute right-3 top-3 text-blue-500 hover:text-blue-600 focus:outline-none"
                   >
-                    Already have an account?
-                  </Typography>
-                  <Button
-                    onClick={handleLoginRedirect}
-                    variant="outlined"
-                    size="large"
-                    fullWidth
-                    startIcon={<LoginIcon />}
-                    sx={{
-                      py: 1.5,
-                      borderColor: "#667eea",
-                      color: "#667eea",
-                      fontWeight: 600,
-                      fontSize: "1rem",
-                      textTransform: "none",
-                      borderRadius: 3,
-                      "&:hover": {
-                        borderColor: "#667eea",
-                        backgroundColor: "rgba(102,126,234,0.1)",
-                        transform: "translateY(-1px)",
-                      },
-                      transition: "all 0.2s ease-in-out",
-                    }}
-                  >
-                    Sign In to Existing Account
-                  </Button>
-                </Box>
-              </Box>
-            </CardContent>
-          </Card>
-        </Fade>
-      </Container>
-    </Box>
+                    {showPassword ? (
+                      <EyeOff className="h-4 w-4" />
+                    ) : (
+                      <Eye className="h-4 w-4" />
+                    )}
+                  </button>
+                </div>
+              </div>
+
+              {/* Error Alert */}
+              {error && (
+                <Alert className="bg-red-50 border-red-200">
+                  <AlertDescription className="text-red-700">
+                    {error}
+                  </AlertDescription>
+                </Alert>
+              )}
+
+              {/* Register Button */}
+              <Button
+                onClick={onSubmit}
+                disabled={loading}
+                className="w-full py-6 text-lg font-semibold bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 transform hover:-translate-y-0.5 transition-all duration-300 rounded-xl shadow-lg hover:shadow-blue-500/25"
+              >
+                {loading ? (
+                  <>
+                    <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                    Creating Account...
+                  </>
+                ) : (
+                  <>
+                    <UserPlus className="w-5 h-5 mr-2" />
+                    Create Account
+                  </>
+                )}
+              </Button>
+
+              {/* Divider */}
+              <div className="relative">
+                <Separator />
+                <div className="absolute inset-0 flex justify-center">
+                  <span className="bg-white px-3 text-sm text-gray-500 font-medium">
+                    or
+                  </span>
+                </div>
+              </div>
+
+              {/* Login Link */}
+              <div className="text-center space-y-4">
+                <p className="text-gray-600">Already have an account?</p>
+                <Button
+                  onClick={handleLoginRedirect}
+                  variant="outline"
+                  className="w-full py-4 text-base font-semibold border-2 border-blue-500 text-blue-500 hover:bg-blue-50 transform hover:-translate-y-0.5 transition-all duration-200 rounded-xl"
+                >
+                  <LogIn className="w-4 h-4 mr-2" />
+                  Sign In to Existing Account
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
   );
 };
 

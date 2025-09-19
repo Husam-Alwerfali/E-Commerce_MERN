@@ -1,46 +1,43 @@
-import {
-  Box,
-  Container,
-  Typography,
-  TextField,
-  Button,
-  Paper,
-  Card,
-  CardContent,
-  Alert,
-  Grid,
-  Fade,
-  CircularProgress,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Divider,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  IconButton,
-  Chip,
-  Avatar,
-} from "@mui/material";
-import {
-  Add as AddIcon,
-  AdminPanelSettings,
-  Inventory,
-  TrendingUp,
-  BarChart,
-  Edit as EditIcon,
-  Delete as DeleteIcon,
-  Close as CloseIcon,
-} from "@mui/icons-material";
 import { useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import {
+  Plus,
+  Settings,
+  Package,
+  TrendingUp,
+  BarChart3,
+  Edit,
+  Trash2,
+  X,
+  Loader2,
+} from "lucide-react";
+import { Button } from "../components/ui/button";
+import { Card, CardContent } from "../components/ui/card";
+import { Input } from "../components/ui/input";
+import { Label } from "../components/ui/label";
+import { Badge } from "../components/ui/badge";
+import { Alert, AlertDescription } from "../components/ui/alert";
+import { Separator } from "../components/ui/separator";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "../components/ui";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "../components/ui/dialog";
+import { Avatar, AvatarFallback, AvatarImage } from "../components/ui/avatar";
 import { useAuth } from "../context/Auth/AuthContext";
 import { BASE_URL } from "../api/baseUrl";
 
@@ -358,666 +355,470 @@ const AdminDashboard = () => {
   };
 
   return (
-    <Box sx={{ minHeight: "100vh", bgcolor: "#fafafa", py: 4 }}>
-      <Container maxWidth="lg">
+    <div className="min-h-screen bg-gray-50 py-8">
+      <div className="container max-w-6xl mx-auto px-4">
+        {/* Header */}
+        <div className="text-center mb-8">
+          <h1 className="text-5xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-4">
+            Admin Dashboard
+          </h1>
+        </div>
+
         {/* Statistics Section */}
-        <Fade in timeout={600}>
-          <Box sx={{ mb: 4 }}>
-            <Typography
-              variant="h4"
-              sx={{
-                fontWeight: 700,
-                mb: 3,
-                textAlign: "center",
-                background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-                backgroundClip: "text",
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-              }}
-            >
-              Admin Dashboard
-            </Typography>
-
-            {statsLoading ? (
-              <Box sx={{ display: "flex", justifyContent: "center", py: 4 }}>
-                <CircularProgress size={60} sx={{ color: "#667eea" }} />
-              </Box>
-            ) : statsError ? (
-              <Alert severity="error" sx={{ mb: 4 }}>
-                {statsError.message || "Failed to load statistics"}
-              </Alert>
-            ) : stats ? (
-              <Grid container spacing={3} sx={{ mb: 4 }}>
-                {/* Total Products Card */}
-                <Grid size={{ xs: 12, md: 4 }}>
-                  <Card
-                    sx={{
-                      background:
-                        "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-                      color: "white",
-                      borderRadius: 3,
-                      transition: "transform 0.3s",
-                      "&:hover": { transform: "scale(1.02)" },
-                    }}
-                  >
-                    <CardContent sx={{ textAlign: "center", py: 3 }}>
-                      <Inventory sx={{ fontSize: 50, mb: 2, opacity: 0.9 }} />
-                      <Typography variant="h3" sx={{ fontWeight: 700, mb: 1 }}>
-                        {stats.totalProducts}
-                      </Typography>
-                      <Typography variant="h6" sx={{ opacity: 0.9 }}>
-                        Total Products
-                      </Typography>
-                    </CardContent>
-                  </Card>
-                </Grid>
-
-                {/* Total Sales Card */}
-                <Grid size={{ xs: 12, md: 4 }}>
-                  <Card
-                    sx={{
-                      background:
-                        "linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%)",
-                      color: "white",
-                      borderRadius: 3,
-                      transition: "transform 0.3s",
-                      "&:hover": { transform: "scale(1.02)" },
-                    }}
-                  >
-                    <CardContent sx={{ textAlign: "center", py: 3 }}>
-                      <TrendingUp sx={{ fontSize: 50, mb: 2, opacity: 0.9 }} />
-                      <Typography variant="h3" sx={{ fontWeight: 700, mb: 1 }}>
-                        {stats.totalSales}
-                      </Typography>
-                      <Typography variant="h6" sx={{ opacity: 0.9 }}>
-                        Total Sales
-                      </Typography>
-                    </CardContent>
-                  </Card>
-                </Grid>
-
-                {/* Top Product Card */}
-                <Grid size={{ xs: 12, md: 4 }}>
-                  <Card
-                    sx={{
-                      background:
-                        "linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%)",
-                      color: "white",
-                      borderRadius: 3,
-                      transition: "transform 0.3s",
-                      "&:hover": { transform: "scale(1.02)" },
-                    }}
-                  >
-                    <CardContent sx={{ textAlign: "center", py: 3 }}>
-                      <BarChart sx={{ fontSize: 50, mb: 2, opacity: 0.9 }} />
-                      <Typography variant="h3" sx={{ fontWeight: 700, mb: 1 }}>
-                        {stats.salesByProduct.length > 0
-                          ? stats.salesByProduct[0].sales
-                          : 0}
-                      </Typography>
-                      <Typography variant="h6" sx={{ opacity: 0.9 }}>
-                        Best Product Sales
-                      </Typography>
-                    </CardContent>
-                  </Card>
-                </Grid>
-              </Grid>
-            ) : null}
-
-            {/* Sales by Product Table */}
-            {stats && stats.salesByProduct.length > 0 && (
-              <Card sx={{ borderRadius: 3, mb: 4 }}>
-                <CardContent>
-                  <Typography variant="h6" sx={{ mb: 3, fontWeight: 600 }}>
-                    Sales by Product
-                  </Typography>
-                  <TableContainer>
-                    <Table>
-                      <TableHead>
-                        <TableRow>
-                          <TableCell sx={{ fontWeight: 600 }}>
-                            Product Name
-                          </TableCell>
-                          <TableCell align="right" sx={{ fontWeight: 600 }}>
-                            Sales Count
-                          </TableCell>
-                        </TableRow>
-                      </TableHead>
-                      <TableBody>
-                        {stats.salesByProduct.map((product, index) => (
-                          <TableRow key={index}>
-                            <TableCell>{product.name}</TableCell>
-                            <TableCell align="right">{product.sales}</TableCell>
-                          </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
-                  </TableContainer>
-                </CardContent>
-              </Card>
-            )}
-
-            {/* Products Management Section */}
-            <Card sx={{ borderRadius: 3, mb: 4 }}>
-              <CardContent>
-                <Typography variant="h6" sx={{ mb: 3, fontWeight: 600 }}>
-                  Manage Products
-                </Typography>
-
-                {productsLoading ? (
-                  <Box
-                    sx={{ display: "flex", justifyContent: "center", py: 4 }}
-                  >
-                    <CircularProgress size={40} />
-                  </Box>
-                ) : productsError ? (
-                  <Alert severity="error" sx={{ mb: 2 }}>
-                    {productsError.message || "Failed to load products"}
-                  </Alert>
-                ) : products && products.length > 0 ? (
-                  <TableContainer>
-                    <Table>
-                      <TableHead>
-                        <TableRow>
-                          <TableCell sx={{ fontWeight: 600 }}>Image</TableCell>
-                          <TableCell sx={{ fontWeight: 600 }}>
-                            Product Name
-                          </TableCell>
-                          <TableCell sx={{ fontWeight: 600 }}>
-                            Price (LYD)
-                          </TableCell>
-                          <TableCell sx={{ fontWeight: 600 }}>Stock</TableCell>
-                          <TableCell sx={{ fontWeight: 600 }}>Sales</TableCell>
-                          <TableCell align="center" sx={{ fontWeight: 600 }}>
-                            Actions
-                          </TableCell>
-                        </TableRow>
-                      </TableHead>
-                      <TableBody>
-                        {products.map((product) => (
-                          <TableRow key={product._id}>
-                            <TableCell>
-                              <Avatar
-                                src={product.image}
-                                alt={product.title}
-                                variant="rounded"
-                                sx={{ width: 60, height: 60 }}
-                              />
-                            </TableCell>
-                            <TableCell>
-                              <Typography
-                                variant="body1"
-                                sx={{ fontWeight: 500 }}
-                              >
-                                {product.title}
-                              </Typography>
-                              <Typography
-                                variant="body2"
-                                color="text.secondary"
-                                sx={{
-                                  maxWidth: 200,
-                                  overflow: "hidden",
-                                  textOverflow: "ellipsis",
-                                  whiteSpace: "nowrap",
-                                }}
-                              >
-                                {product.description}
-                              </Typography>
-                            </TableCell>
-                            <TableCell>
-                              <Typography
-                                variant="body1"
-                                sx={{ fontWeight: 500 }}
-                              >
-                                {product.price.toFixed(2)} LYD
-                              </Typography>
-                            </TableCell>
-                            <TableCell>
-                              <Chip
-                                label={`${product.stock} units`}
-                                color={
-                                  product.stock > 10
-                                    ? "success"
-                                    : product.stock > 0
-                                    ? "warning"
-                                    : "error"
-                                }
-                                size="small"
-                              />
-                            </TableCell>
-                            <TableCell>
-                              <Typography variant="body2">
-                                {product.salesCount || 0} sales
-                              </Typography>
-                            </TableCell>
-                            <TableCell align="center">
-                              <Box
-                                sx={{
-                                  display: "flex",
-                                  gap: 1,
-                                  justifyContent: "center",
-                                }}
-                              >
-                                <IconButton
-                                  size="small"
-                                  color="primary"
-                                  onClick={() => handleEditProduct(product)}
-                                  sx={{
-                                    "&:hover": {
-                                      backgroundColor:
-                                        "rgba(25, 118, 210, 0.1)",
-                                    },
-                                  }}
-                                >
-                                  <EditIcon fontSize="small" />
-                                </IconButton>
-                                <IconButton
-                                  size="small"
-                                  color="error"
-                                  onClick={() =>
-                                    handleDeleteProduct(product._id)
-                                  }
-                                  sx={{
-                                    "&:hover": {
-                                      backgroundColor: "rgba(244, 67, 54, 0.1)",
-                                    },
-                                  }}
-                                >
-                                  <DeleteIcon fontSize="small" />
-                                </IconButton>
-                              </Box>
-                            </TableCell>
-                          </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
-                  </TableContainer>
-                ) : (
-                  <Alert severity="info">
-                    No products found. Add your first product below!
-                  </Alert>
-                )}
+        {statsLoading ? (
+          <div className="flex justify-center py-8">
+            <Loader2 className="h-16 w-16 animate-spin text-blue-500" />
+          </div>
+        ) : statsError ? (
+          <Alert variant="destructive" className="mb-8">
+            <AlertDescription>
+              {statsError.message || "Failed to load statistics"}
+            </AlertDescription>
+          </Alert>
+        ) : stats ? (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            {/* Total Products Card */}
+            <Card className="bg-gradient-to-br from-blue-500 to-purple-600 text-white border-0 hover:scale-105 transition-transform duration-300">
+              <CardContent className="p-6 text-center">
+                <Package className="w-12 h-12 mx-auto mb-4 opacity-90" />
+                <div className="text-4xl font-bold mb-2">
+                  {stats.totalProducts}
+                </div>
+                <div className="text-lg opacity-90">Total Products</div>
               </CardContent>
             </Card>
 
-            <Divider sx={{ my: 4 }} />
-          </Box>
-        </Fade>
+            {/* Total Sales Card */}
+            <Card className="bg-gradient-to-br from-red-500 to-pink-500 text-white border-0 hover:scale-105 transition-transform duration-300">
+              <CardContent className="p-6 text-center">
+                <TrendingUp className="w-12 h-12 mx-auto mb-4 opacity-90" />
+                <div className="text-4xl font-bold mb-2">
+                  {stats.totalSales}
+                </div>
+                <div className="text-lg opacity-90">Total Sales</div>
+              </CardContent>
+            </Card>
 
-        {/* Add Product Form */}
-        <Fade in timeout={800}>
-          <Card
-            sx={{
-              borderRadius: 4,
-              boxShadow: "0 20px 60px rgba(0,0,0,0.1)",
-              overflow: "hidden",
-              background: "rgba(255,255,255,0.95)",
-              backdropFilter: "blur(20px)",
-              border: "1px solid rgba(255,255,255,0.2)",
-            }}
-          >
-            {/* Header Section */}
-            <Paper
-              sx={{
-                background: editingProduct
-                  ? "linear-gradient(135deg, #ff9800 0%, #f57c00 100%)" // Orange gradient for edit mode
-                  : "linear-gradient(135deg, #667eea 0%, #764ba2 100%)", // Blue gradient for add mode
-                color: "white",
-                p: 4,
-                textAlign: "center",
-                borderRadius: 0,
-              }}
-            >
-              <AdminPanelSettings sx={{ fontSize: 60, mb: 2, opacity: 0.9 }} />
-              <Typography
-                variant="h5"
-                sx={{
-                  fontWeight: 700,
-                  mb: 1,
-                  textShadow: "0 2px 4px rgba(0,0,0,0.3)",
-                }}
-              >
-                {editingProduct ? "Edit Product" : "Add New Product"}
-              </Typography>
-              <Typography
-                variant="body1"
-                sx={{
-                  opacity: 0.9,
-                  fontSize: "1.1rem",
-                }}
-              >
-                {editingProduct
-                  ? `Update "${editingProduct.title}" details`
-                  : "Add products to your store inventory"}
-              </Typography>
-            </Paper>
+            {/* Top Product Card */}
+            <Card className="bg-gradient-to-br from-teal-500 to-green-500 text-white border-0 hover:scale-105 transition-transform duration-300">
+              <CardContent className="p-6 text-center">
+                <BarChart3 className="w-12 h-12 mx-auto mb-4 opacity-90" />
+                <div className="text-4xl font-bold mb-2">
+                  {stats.salesByProduct.length > 0
+                    ? stats.salesByProduct[0].sales
+                    : 0}
+                </div>
+                <div className="text-lg opacity-90">Best Product Sales</div>
+              </CardContent>
+            </Card>
+          </div>
+        ) : null}
 
-            <CardContent sx={{ p: 4 }}>
-              <Box
-                id="product-form"
-                component="form"
-                onSubmit={handleSubmit(
-                  editingProduct ? handleUpdateProduct : onSubmit
-                )}
-                sx={{ mt: 2 }}
-              >
-                <Grid container spacing={3}>
-                  {/* Product Name */}
-                  <Grid size={{ xs: 12, sm: 6 }}>
-                    <Controller
-                      name="name"
-                      control={control}
-                      render={({ field }) => (
-                        <TextField
-                          {...field}
-                          label="Product Name"
-                          variant="outlined"
-                          fullWidth
-                          error={!!errors.name}
-                          helperText={errors.name?.message}
-                          sx={{
-                            "& .MuiOutlinedInput-root": {
-                              "& fieldset": {
-                                borderColor: "rgba(102, 126, 234, 0.3)",
-                              },
-                              "&:hover fieldset": {
-                                borderColor: "#667eea",
-                              },
-                              "&.Mui-focused fieldset": {
-                                borderColor: "#667eea",
-                              },
-                            },
-                          }}
-                        />
-                      )}
-                    />
-                  </Grid>
-
-                  {/* Stock */}
-                  <Grid size={{ xs: 12, sm: 6 }}>
-                    <Controller
-                      name="stock"
-                      control={control}
-                      render={({ field }) => (
-                        <TextField
-                          {...field}
-                          label="Stock Quantity"
-                          type="number"
-                          variant="outlined"
-                          fullWidth
-                          error={!!errors.stock}
-                          helperText={errors.stock?.message}
-                          sx={{
-                            "& .MuiOutlinedInput-root": {
-                              "& fieldset": {
-                                borderColor: "rgba(102, 126, 234, 0.3)",
-                              },
-                              "&:hover fieldset": {
-                                borderColor: "#667eea",
-                              },
-                              "&.Mui-focused fieldset": {
-                                borderColor: "#667eea",
-                              },
-                            },
-                          }}
-                        />
-                      )}
-                    />
-                  </Grid>
-
-                  {/* Description */}
-                  <Grid size={{ xs: 12 }}>
-                    <Controller
-                      name="description"
-                      control={control}
-                      render={({ field }) => (
-                        <TextField
-                          {...field}
-                          label="Product Description"
-                          variant="outlined"
-                          fullWidth
-                          multiline
-                          rows={3}
-                          error={!!errors.description}
-                          helperText={errors.description?.message}
-                          sx={{
-                            "& .MuiOutlinedInput-root": {
-                              "& fieldset": {
-                                borderColor: "rgba(102, 126, 234, 0.3)",
-                              },
-                              "&:hover fieldset": {
-                                borderColor: "#667eea",
-                              },
-                              "&.Mui-focused fieldset": {
-                                borderColor: "#667eea",
-                              },
-                            },
-                          }}
-                        />
-                      )}
-                    />
-                  </Grid>
-
-                  {/* Price */}
-                  <Grid size={{ xs: 12, sm: 6 }}>
-                    <Controller
-                      name="price"
-                      control={control}
-                      render={({ field }) => (
-                        <TextField
-                          {...field}
-                          label="Price (LYD)"
-                          type="number"
-                          variant="outlined"
-                          fullWidth
-                          inputProps={{ step: "0.01", min: "0" }}
-                          error={!!errors.price}
-                          helperText={errors.price?.message}
-                          sx={{
-                            "& .MuiOutlinedInput-root": {
-                              "& fieldset": {
-                                borderColor: "rgba(102, 126, 234, 0.3)",
-                              },
-                              "&:hover fieldset": {
-                                borderColor: "#667eea",
-                              },
-                              "&.Mui-focused fieldset": {
-                                borderColor: "#667eea",
-                              },
-                            },
-                          }}
-                        />
-                      )}
-                    />
-                  </Grid>
-
-                  {/* Image URL */}
-                  <Grid size={{ xs: 12, sm: 6 }}>
-                    <Controller
-                      name="image"
-                      control={control}
-                      render={({ field }) => (
-                        <TextField
-                          {...field}
-                          label="Image URL"
-                          type="url"
-                          variant="outlined"
-                          fullWidth
-                          error={!!errors.image}
-                          helperText={errors.image?.message}
-                          sx={{
-                            "& .MuiOutlinedInput-root": {
-                              "& fieldset": {
-                                borderColor: "rgba(102, 126, 234, 0.3)",
-                              },
-                              "&:hover fieldset": {
-                                borderColor: "#667eea",
-                              },
-                              "&.Mui-focused fieldset": {
-                                borderColor: "#667eea",
-                              },
-                            },
-                          }}
-                        />
-                      )}
-                    />
-                  </Grid>
-                </Grid>
-
-                {/* Success Alert */}
-                {success && (
-                  <Fade in timeout={300}>
-                    <Alert
-                      severity="success"
-                      sx={{
-                        mt: 3,
-                        borderRadius: 2,
-                      }}
-                    >
-                      {success}
-                    </Alert>
-                  </Fade>
-                )}
-
-                {/* Error Alert for operations */}
-                {(addProductMutation.error ||
-                  updateProductMutation.error ||
-                  deleteProductMutation.error) && (
-                  <Fade in timeout={300}>
-                    <Alert
-                      severity="error"
-                      sx={{
-                        mt: 3,
-                        borderRadius: 2,
-                      }}
-                    >
-                      {addProductMutation.error?.message ||
-                        updateProductMutation.error?.message ||
-                        deleteProductMutation.error?.message}
-                    </Alert>
-                  </Fade>
-                )}
-
-                {/* Submit Buttons */}
-                <Box sx={{ mt: 4, display: "flex", gap: 2 }}>
-                  {editingProduct && (
-                    <Button
-                      type="button"
-                      variant="outlined"
-                      size="large"
-                      onClick={cancelEdit}
-                      startIcon={<CloseIcon />}
-                      sx={{
-                        py: 1.8,
-                        fontWeight: 600,
-                        fontSize: "1.1rem",
-                        textTransform: "none",
-                        borderRadius: 3,
-                        borderColor: "#667eea",
-                        color: "#667eea",
-                        "&:hover": {
-                          borderColor: "#5a6fd8",
-                          backgroundColor: "rgba(102,126,234,0.1)",
-                        },
-                        transition: "all 0.3s ease-in-out",
-                        flex: 1,
-                      }}
-                    >
-                      Cancel
-                    </Button>
-                  )}
-                  <Button
-                    type="submit"
-                    variant="contained"
-                    size="large"
-                    disabled={
-                      addProductMutation.isPending ||
-                      updateProductMutation.isPending
-                    }
-                    startIcon={
-                      addProductMutation.isPending ||
-                      updateProductMutation.isPending ? (
-                        <CircularProgress size={20} color="inherit" />
-                      ) : editingProduct ? (
-                        <EditIcon />
-                      ) : (
-                        <AddIcon />
-                      )
-                    }
-                    sx={{
-                      py: 1.8,
-                      background:
-                        "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-                      fontWeight: 600,
-                      fontSize: "1.1rem",
-                      textTransform: "none",
-                      borderRadius: 3,
-                      "&:hover": {
-                        background:
-                          "linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%)",
-                        transform: "translateY(-2px)",
-                        boxShadow: "0 6px 20px rgba(102,126,234,0.4)",
-                      },
-                      "&:disabled": {
-                        background: "rgba(102,126,234,0.6)",
-                      },
-                      transition: "all 0.3s ease-in-out",
-                      flex: editingProduct ? 1 : "auto",
-                      width: editingProduct ? "auto" : "100%",
-                    }}
-                  >
-                    {addProductMutation.isPending
-                      ? "Adding Product..."
-                      : updateProductMutation.isPending
-                      ? "Updating Product..."
-                      : editingProduct
-                      ? "Update Product"
-                      : "Add Product"}
-                  </Button>
-                </Box>
-              </Box>
+        {/* Sales by Product Table */}
+        {stats && stats.salesByProduct.length > 0 && (
+          <Card className="mb-8">
+            <CardContent className="p-6">
+              <h2 className="text-2xl font-semibold mb-4">Sales by Product</h2>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Product Name</TableHead>
+                    <TableHead className="text-right">Sales Count</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {stats.salesByProduct.map((product, index) => (
+                    <TableRow key={index}>
+                      <TableCell className="font-medium">
+                        {product.name}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        {product.sales}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
             </CardContent>
           </Card>
-        </Fade>
+        )}
+
+        {/* Products Management Section */}
+        <Card className="mb-8">
+          <CardContent className="p-6">
+            <h2 className="text-2xl font-semibold mb-4">Manage Products</h2>
+
+            {productsLoading ? (
+              <div className="flex justify-center py-8">
+                <Loader2 className="h-10 w-10 animate-spin" />
+              </div>
+            ) : productsError ? (
+              <Alert variant="destructive" className="mb-4">
+                <AlertDescription>
+                  {productsError.message || "Failed to load products"}
+                </AlertDescription>
+              </Alert>
+            ) : products && products.length > 0 ? (
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Image</TableHead>
+                    <TableHead>Product Name</TableHead>
+                    <TableHead>Price (LYD)</TableHead>
+                    <TableHead>Stock</TableHead>
+                    <TableHead>Sales</TableHead>
+                    <TableHead className="text-center">Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {products.map((product) => (
+                    <TableRow key={product._id}>
+                      <TableCell>
+                        <Avatar className="w-15 h-15">
+                          <AvatarImage
+                            src={product.image}
+                            alt={product.title}
+                          />
+                          <AvatarFallback>
+                            {product.title.charAt(0)}
+                          </AvatarFallback>
+                        </Avatar>
+                      </TableCell>
+                      <TableCell>
+                        <div className="space-y-1">
+                          <div className="font-medium">{product.title}</div>
+                          <div className="text-sm text-gray-500 max-w-[200px] truncate">
+                            {product.description}
+                          </div>
+                        </div>
+                      </TableCell>
+                      <TableCell className="font-medium">
+                        {product.price.toFixed(2)} LYD
+                      </TableCell>
+                      <TableCell>
+                        <Badge
+                          variant={
+                            product.stock > 10
+                              ? "secondary"
+                              : product.stock > 0
+                              ? "outline"
+                              : "destructive"
+                          }
+                        >
+                          {product.stock} units
+                        </Badge>
+                      </TableCell>
+                      <TableCell>{product.salesCount || 0} sales</TableCell>
+                      <TableCell>
+                        <div className="flex justify-center gap-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleEditProduct(product)}
+                            className="text-blue-600 border-blue-200 hover:bg-blue-50"
+                          >
+                            <Edit className="w-4 h-4" />
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleDeleteProduct(product._id)}
+                            className="text-red-600 border-red-200 hover:bg-red-50"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            ) : (
+              <Alert>
+                <AlertDescription>
+                  No products found. Add your first product below!
+                </AlertDescription>
+              </Alert>
+            )}
+          </CardContent>
+        </Card>
+
+        <Separator className="my-8" />
+
+        {/* Add/Edit Product Form */}
+        <Card className="rounded-3xl overflow-hidden shadow-2xl bg-white/95 backdrop-blur-sm border border-white/20">
+          {/* Header Section */}
+          <div
+            className={`text-white p-8 text-center ${
+              editingProduct
+                ? "bg-gradient-to-r from-orange-500 to-orange-600"
+                : "bg-gradient-to-r from-blue-500 to-purple-600"
+            }`}
+          >
+            <Settings className="w-16 h-16 mx-auto mb-4 opacity-90" />
+            <h2 className="text-3xl font-bold mb-2">
+              {editingProduct ? "Edit Product" : "Add New Product"}
+            </h2>
+            <p className="text-lg opacity-90">
+              {editingProduct
+                ? `Update "${editingProduct.title}" details`
+                : "Add products to your store inventory"}
+            </p>
+          </div>
+
+          <CardContent className="p-8">
+            <form
+              id="product-form"
+              onSubmit={handleSubmit(
+                editingProduct ? handleUpdateProduct : onSubmit
+              )}
+              className="space-y-6"
+            >
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Product Name */}
+                <div className="space-y-2">
+                  <Label htmlFor="name">Product Name</Label>
+                  <Controller
+                    name="name"
+                    control={control}
+                    render={({ field }) => (
+                      <div>
+                        <Input
+                          {...field}
+                          id="name"
+                          placeholder="Enter product name"
+                          className={errors.name ? "border-red-300" : ""}
+                        />
+                        {errors.name && (
+                          <p className="text-sm text-red-600 mt-1">
+                            {errors.name.message}
+                          </p>
+                        )}
+                      </div>
+                    )}
+                  />
+                </div>
+
+                {/* Stock */}
+                <div className="space-y-2">
+                  <Label htmlFor="stock">Stock Quantity</Label>
+                  <Controller
+                    name="stock"
+                    control={control}
+                    render={({ field }) => (
+                      <div>
+                        <Input
+                          {...field}
+                          id="stock"
+                          type="number"
+                          placeholder="Enter stock quantity"
+                          className={errors.stock ? "border-red-300" : ""}
+                        />
+                        {errors.stock && (
+                          <p className="text-sm text-red-600 mt-1">
+                            {errors.stock.message}
+                          </p>
+                        )}
+                      </div>
+                    )}
+                  />
+                </div>
+              </div>
+
+              {/* Description */}
+              <div className="space-y-2">
+                <Label htmlFor="description">Product Description</Label>
+                <Controller
+                  name="description"
+                  control={control}
+                  render={({ field }) => (
+                    <div>
+                      <textarea
+                        {...field}
+                        id="description"
+                        rows={3}
+                        placeholder="Enter product description"
+                        className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none ${
+                          errors.description
+                            ? "border-red-300"
+                            : "border-gray-300"
+                        }`}
+                      />
+                      {errors.description && (
+                        <p className="text-sm text-red-600 mt-1">
+                          {errors.description.message}
+                        </p>
+                      )}
+                    </div>
+                  )}
+                />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Price */}
+                <div className="space-y-2">
+                  <Label htmlFor="price">Price (LYD)</Label>
+                  <Controller
+                    name="price"
+                    control={control}
+                    render={({ field }) => (
+                      <div>
+                        <Input
+                          {...field}
+                          id="price"
+                          type="number"
+                          step="0.01"
+                          min="0"
+                          placeholder="Enter price"
+                          className={errors.price ? "border-red-300" : ""}
+                        />
+                        {errors.price && (
+                          <p className="text-sm text-red-600 mt-1">
+                            {errors.price.message}
+                          </p>
+                        )}
+                      </div>
+                    )}
+                  />
+                </div>
+
+                {/* Image URL */}
+                <div className="space-y-2">
+                  <Label htmlFor="image">Image URL</Label>
+                  <Controller
+                    name="image"
+                    control={control}
+                    render={({ field }) => (
+                      <div>
+                        <Input
+                          {...field}
+                          id="image"
+                          type="url"
+                          placeholder="Enter image URL"
+                          className={errors.image ? "border-red-300" : ""}
+                        />
+                        {errors.image && (
+                          <p className="text-sm text-red-600 mt-1">
+                            {errors.image.message}
+                          </p>
+                        )}
+                      </div>
+                    )}
+                  />
+                </div>
+              </div>
+
+              {/* Success Alert */}
+              {success && (
+                <Alert className="bg-green-50 border-green-200">
+                  <AlertDescription className="text-green-700">
+                    {success}
+                  </AlertDescription>
+                </Alert>
+              )}
+
+              {/* Error Alert */}
+              {(addProductMutation.error ||
+                updateProductMutation.error ||
+                deleteProductMutation.error) && (
+                <Alert variant="destructive">
+                  <AlertDescription>
+                    {addProductMutation.error?.message ||
+                      updateProductMutation.error?.message ||
+                      deleteProductMutation.error?.message}
+                  </AlertDescription>
+                </Alert>
+              )}
+
+              {/* Submit Buttons */}
+              <div className="flex gap-4">
+                {editingProduct && (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={cancelEdit}
+                    className="flex-1"
+                  >
+                    <X className="w-4 h-4 mr-2" />
+                    Cancel
+                  </Button>
+                )}
+                <Button
+                  type="submit"
+                  disabled={
+                    addProductMutation.isPending ||
+                    updateProductMutation.isPending
+                  }
+                  className={`${
+                    editingProduct ? "flex-1" : "w-full"
+                  } py-4 text-lg font-semibold bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 transform hover:-translate-y-1 transition-all duration-300 shadow-lg hover:shadow-blue-500/30`}
+                >
+                  {addProductMutation.isPending ||
+                  updateProductMutation.isPending ? (
+                    <>
+                      <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                      {addProductMutation.isPending
+                        ? "Adding..."
+                        : "Updating..."}
+                    </>
+                  ) : (
+                    <>
+                      {editingProduct ? (
+                        <Edit className="w-5 h-5 mr-2" />
+                      ) : (
+                        <Plus className="w-5 h-5 mr-2" />
+                      )}
+                      {editingProduct ? "Update Product" : "Add Product"}
+                    </>
+                  )}
+                </Button>
+              </div>
+            </form>
+          </CardContent>
+        </Card>
 
         {/* Delete Confirmation Dialog */}
         <Dialog
           open={!!deleteConfirmId}
-          onClose={() => setDeleteConfirmId(null)}
-          aria-labelledby="delete-dialog-title"
+          onOpenChange={() => setDeleteConfirmId(null)}
         >
-          <DialogTitle id="delete-dialog-title">
-            Confirm Delete Product
-          </DialogTitle>
           <DialogContent>
-            <Typography>
-              Are you sure you want to delete this product? This action cannot
-              be undone.
-            </Typography>
-          </DialogContent>
-          <DialogActions sx={{ p: 2 }}>
-            <Button onClick={() => setDeleteConfirmId(null)} color="inherit">
-              Cancel
-            </Button>
-            <Button
-              onClick={confirmDeleteProduct}
-              color="error"
-              variant="contained"
-              disabled={deleteProductMutation.isPending}
-              startIcon={
-                deleteProductMutation.isPending ? (
-                  <CircularProgress size={16} color="inherit" />
+            <DialogHeader>
+              <DialogTitle>Confirm Delete Product</DialogTitle>
+              <DialogDescription>
+                Are you sure you want to delete this product? This action cannot
+                be undone.
+              </DialogDescription>
+            </DialogHeader>
+            <DialogFooter>
+              <Button
+                variant="outline"
+                onClick={() => setDeleteConfirmId(null)}
+              >
+                Cancel
+              </Button>
+              <Button
+                variant="destructive"
+                onClick={confirmDeleteProduct}
+                disabled={deleteProductMutation.isPending}
+              >
+                {deleteProductMutation.isPending ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Deleting...
+                  </>
                 ) : (
-                  <DeleteIcon />
-                )
-              }
-            >
-              {deleteProductMutation.isPending ? "Deleting..." : "Delete"}
-            </Button>
-          </DialogActions>
+                  <>
+                    <Trash2 className="w-4 h-4 mr-2" />
+                    Delete
+                  </>
+                )}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
         </Dialog>
-      </Container>
-    </Box>
+      </div>
+    </div>
   );
 };
 

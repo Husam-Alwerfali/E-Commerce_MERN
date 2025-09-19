@@ -1,29 +1,25 @@
 import {
-  Box,
-  Typography,
-  Container,
-  TextField,
-  Button,
-  Paper,
   Card,
   CardContent,
-  Alert,
-  InputAdornment,
-  IconButton,
-  Divider,
-  Chip,
-  Fade,
-  CircularProgress,
-} from "@mui/material";
+  CardHeader,
+  CardTitle,
+} from "../components/ui/card";
+import { Button } from "../components/ui/button";
+import { Input } from "../components/ui/input";
+import { Label } from "../components/ui/label";
+import { Alert, AlertDescription } from "../components/ui/alert";
+import { Separator } from "../components/ui/separator";
 import {
-  Email,
+  Mail,
   Lock,
-  Visibility,
-  VisibilityOff,
-  Login as LoginIcon,
+  Eye,
+  EyeOff,
+  LogIn,
   Store,
-  PersonAdd,
-} from "@mui/icons-material";
+  UserPlus,
+  Loader2,
+  AlertCircle,
+} from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { BASE_URL } from "../api/baseUrl";
 import { useAuth } from "../context/Auth/AuthContext";
@@ -115,250 +111,127 @@ const LoginPage = () => {
   }, [isAuthenticated, navigate]);
 
   return (
-    <Box
-      sx={{
-        minHeight: "100vh",
-        background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-        display: "flex",
-        alignItems: "center",
-        py: 4,
-      }}
-    >
-      <Container maxWidth="sm">
-        <Fade in timeout={800}>
-          <Card
-            sx={{
-              borderRadius: 4,
-              boxShadow: "0 20px 60px rgba(0,0,0,0.1)",
-              overflow: "hidden",
-              background: "rgba(255,255,255,0.95)",
-              backdropFilter: "blur(20px)",
-              border: "1px solid rgba(255,255,255,0.2)",
-            }}
-          >
-            {/* Header Section */}
-            <Paper
-              sx={{
-                background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-                color: "white",
-                p: 4,
-                textAlign: "center",
-                borderRadius: 0,
-              }}
-            >
-              <Store sx={{ fontSize: 60, mb: 2, opacity: 0.9 }} />
-              <Typography
-                variant="h4"
-                sx={{
-                  fontWeight: 700,
-                  mb: 1,
-                  textShadow: "0 2px 4px rgba(0,0,0,0.3)",
-                }}
-              >
+    <div className="min-h-screen bg-gradient-to-br from-blue-600 to-purple-600 flex items-center justify-center p-4">
+      <div className="w-full max-w-md animate-in fade-in-50 duration-800">
+        <Card className="border-0 shadow-2xl bg-white/95 backdrop-blur-sm">
+          {/* Header Section */}
+          <CardHeader className="bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-t-lg pb-8">
+            <div className="text-center space-y-2">
+              <Store className="w-16 h-16 mx-auto opacity-90" />
+              <CardTitle className="text-3xl font-bold text-shadow-sm">
                 Welcome Back
-              </Typography>
-              <Typography
-                variant="body1"
-                sx={{
-                  opacity: 0.9,
-                  fontSize: "1.1rem",
-                }}
-              >
+              </CardTitle>
+              <p className="text-blue-100 text-lg">
                 Sign in to your TopShop account
-              </Typography>
-            </Paper>
+              </p>
+            </div>
+          </CardHeader>
 
-            <CardContent sx={{ p: 4 }}>
-              {/* Login Form */}
-              <Box component="form" sx={{ mt: 2 }}>
-                {/* Email Field */}
-                <TextField
-                  inputRef={emailRef}
-                  label="Email Address"
-                  name="email"
-                  type="email"
-                  variant="outlined"
-                  fullWidth
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <Email sx={{ color: "#667eea" }} />
-                      </InputAdornment>
-                    ),
-                  }}
-                  InputLabelProps={{
-                    sx: { color: "#667eea" },
-                  }}
-                  sx={{
-                    mb: 3,
-                    "& .MuiOutlinedInput-root": {
-                      "& fieldset": {
-                        borderColor: "rgba(102, 126, 234, 0.3)",
-                      },
-                      "&:hover fieldset": {
-                        borderColor: "#667eea",
-                      },
-                      "&.Mui-focused fieldset": {
-                        borderColor: "#667eea",
-                      },
-                    },
-                  }}
-                />
-
-                {/* Password Field */}
-                <TextField
-                  inputRef={passwordRef}
-                  label="Password"
-                  name="password"
-                  type={showPassword ? "text" : "password"}
-                  variant="outlined"
-                  fullWidth
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <Lock sx={{ color: "#667eea" }} />
-                      </InputAdornment>
-                    ),
-                    endAdornment: (
-                      <InputAdornment position="end">
-                        <IconButton
-                          aria-label="toggle password visibility"
-                          onClick={handleClickShowPassword}
-                          edge="end"
-                          sx={{ color: "#667eea" }}
-                        >
-                          {showPassword ? <VisibilityOff /> : <Visibility />}
-                        </IconButton>
-                      </InputAdornment>
-                    ),
-                  }}
-                  InputLabelProps={{
-                    sx: { color: "#667eea" },
-                  }}
-                  sx={{
-                    mb: 3,
-                    "& .MuiOutlinedInput-root": {
-                      "& fieldset": {
-                        borderColor: "rgba(102, 126, 234, 0.3)",
-                      },
-                      "&:hover fieldset": {
-                        borderColor: "#667eea",
-                      },
-                      "&.Mui-focused fieldset": {
-                        borderColor: "#667eea",
-                      },
-                    },
-                  }}
-                />
-
-                {/* Error Alert */}
-                {error && (
-                  <Fade in timeout={300}>
-                    <Alert
-                      severity="error"
-                      sx={{
-                        mb: 3,
-                        borderRadius: 2,
-                        "& .MuiAlert-icon": {
-                          color: "#ff6b6b",
-                        },
-                      }}
-                    >
-                      {error}
-                    </Alert>
-                  </Fade>
-                )}
-
-                {/* Login Button */}
-                <Button
-                  onClick={onSubmit}
-                  variant="contained"
-                  size="large"
-                  fullWidth
-                  disabled={loading}
-                  startIcon={
-                    loading ? (
-                      <CircularProgress size={20} color="inherit" />
-                    ) : (
-                      <LoginIcon />
-                    )
-                  }
-                  sx={{
-                    py: 1.8,
-                    background:
-                      "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-                    fontWeight: 600,
-                    fontSize: "1.1rem",
-                    textTransform: "none",
-                    borderRadius: 3,
-                    mb: 3,
-                    "&:hover": {
-                      background:
-                        "linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%)",
-                      transform: "translateY(-2px)",
-                      boxShadow: "0 6px 20px rgba(102,126,234,0.4)",
-                    },
-                    "&:disabled": {
-                      background: "rgba(102,126,234,0.6)",
-                    },
-                    transition: "all 0.3s ease-in-out",
-                  }}
-                >
-                  {loading ? "Signing In..." : "Sign In"}
-                </Button>
-
-                {/* Divider */}
-                <Divider sx={{ mb: 3 }}>
-                  <Chip
-                    label="or"
-                    sx={{
-                      bgcolor: "transparent",
-                      color: "text.secondary",
-                      fontWeight: 500,
-                    }}
+          <CardContent className="p-6 space-y-6">
+            {/* Login Form */}
+            <div className="space-y-4">
+              {/* Email Field */}
+              <div className="space-y-2">
+                <Label htmlFor="email" className="text-blue-700 font-medium">
+                  Email Address
+                </Label>
+                <div className="relative">
+                  <Mail className="absolute left-3 top-3 w-4 h-4 text-blue-600" />
+                  <Input
+                    ref={emailRef}
+                    id="email"
+                    type="email"
+                    placeholder="Enter your email"
+                    className="pl-10 border-blue-200 focus:border-blue-600 focus:ring-blue-600"
                   />
-                </Divider>
+                </div>
+              </div>
 
-                {/* Register Link */}
-                <Box sx={{ textAlign: "center" }}>
-                  <Typography
-                    variant="body2"
-                    color="text.secondary"
-                    sx={{ mb: 2 }}
-                  >
-                    Don't have an account yet?
-                  </Typography>
+              {/* Password Field */}
+              <div className="space-y-2">
+                <Label htmlFor="password" className="text-blue-700 font-medium">
+                  Password
+                </Label>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-3 w-4 h-4 text-blue-600" />
+                  <Input
+                    ref={passwordRef}
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    placeholder="Enter your password"
+                    className="pl-10 pr-10 border-blue-200 focus:border-blue-600 focus:ring-blue-600"
+                  />
                   <Button
-                    onClick={handleRegisterRedirect}
-                    variant="outlined"
-                    size="large"
-                    fullWidth
-                    startIcon={<PersonAdd />}
-                    sx={{
-                      py: 1.5,
-                      borderColor: "#667eea",
-                      color: "#667eea",
-                      fontWeight: 600,
-                      fontSize: "1rem",
-                      textTransform: "none",
-                      borderRadius: 3,
-                      "&:hover": {
-                        borderColor: "#667eea",
-                        backgroundColor: "rgba(102,126,234,0.1)",
-                        transform: "translateY(-1px)",
-                      },
-                      transition: "all 0.2s ease-in-out",
-                    }}
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    className="absolute right-0 top-0 h-full px-3 text-blue-600 hover:text-blue-800"
+                    onClick={handleClickShowPassword}
                   >
-                    Create New Account
+                    {showPassword ? (
+                      <EyeOff className="w-4 h-4" />
+                    ) : (
+                      <Eye className="w-4 h-4" />
+                    )}
                   </Button>
-                </Box>
-              </Box>
-            </CardContent>
-          </Card>
-        </Fade>
-      </Container>
-    </Box>
+                </div>
+              </div>
+
+              {/* Error Alert */}
+              {error && (
+                <Alert
+                  variant="destructive"
+                  className="animate-in slide-in-from-top-2 duration-300"
+                >
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertDescription>{error}</AlertDescription>
+                </Alert>
+              )}
+
+              {/* Login Button */}
+              <Button
+                onClick={onSubmit}
+                disabled={loading}
+                className="w-full h-12 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold text-lg transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5"
+              >
+                {loading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Signing In...
+                  </>
+                ) : (
+                  <>
+                    <LogIn className="mr-2 h-4 w-4" />
+                    Sign In
+                  </>
+                )}
+              </Button>
+            </div>
+
+            {/* Divider */}
+            <div className="relative">
+              <Separator />
+              <div className="absolute inset-0 flex items-center justify-center">
+                <span className="bg-white px-2 text-gray-500 text-sm">or</span>
+              </div>
+            </div>
+
+            {/* Register Section */}
+            <div className="text-center space-y-3">
+              <p className="text-gray-600">Don't have an account yet?</p>
+              <Button
+                onClick={handleRegisterRedirect}
+                variant="outline"
+                className="w-full h-11 border-blue-600 text-blue-600 hover:bg-blue-50 font-semibold transition-all duration-200 hover:-translate-y-0.5"
+              >
+                <UserPlus className="mr-2 h-4 w-4" />
+                Create New Account
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
   );
 };
 

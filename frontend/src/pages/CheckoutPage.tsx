@@ -1,18 +1,14 @@
-import {
-  Box,
-  Container,
-  Typography,
-  TextField,
-  Button,
-  Paper,
-  Divider,
-  Alert,
-} from "@mui/material";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Card, CardContent } from "../components/ui/card";
+import { Button } from "../components/ui/button";
+import { Input } from "../components/ui/input";
+import { Label } from "../components/ui/label";
+import { Alert, AlertDescription } from "../components/ui/alert";
+import { Separator } from "../components/ui/separator";
 import { useCart } from "../context/Cart/CartContext";
 import { useAuth } from "../context/Auth/AuthContext";
 import { BASE_URL } from "../api/baseUrl";
-import { useNavigate } from "react-router-dom";
 
 const CheckoutPage = () => {
   const { cartItems, totalPrice, clearCart } = useCart();
@@ -41,11 +37,7 @@ const CheckoutPage = () => {
       return;
     }
 
-    if (
-      !address.street ||
-      !address.city ||
-      !address.PhoneNumber
-    ) {
+    if (!address.street || !address.city || !address.PhoneNumber) {
       setError("Please fill in all address fields");
       return;
     }
@@ -61,7 +53,7 @@ const CheckoutPage = () => {
     try {
       // Format address as a string for the backend
       const addressString = `${address.street}, ${address.city}, ${address.PhoneNumber}`;
-      
+
       const response = await fetch(`${BASE_URL}/cart/checkout`, {
         method: "POST",
         headers: {
@@ -84,9 +76,9 @@ const CheckoutPage = () => {
         clearCart();
       }
 
-    //   setTimeout(() => {
-    //     navigate("/");
-    //   }, 4000);
+      //   setTimeout(() => {
+      //     navigate("/");
+      //   }, 4000);
     } catch (error) {
       console.error("Checkout error:", error);
       setError(error instanceof Error ? error.message : "Checkout failed");
@@ -97,141 +89,139 @@ const CheckoutPage = () => {
 
   if (cartItems.length === 0) {
     return (
-      <Container maxWidth="md" sx={{ mt: 4 }}>
-        <Alert severity="info">
-          Your cart is empty.{" "}
-          <Button onClick={() => navigate("/")}>Continue Shopping</Button>
+      <div className="container max-w-2xl mx-auto mt-8 px-4">
+        <Alert>
+          <AlertDescription>
+            Your cart is empty.{" "}
+            <Button
+              variant="link"
+              className="p-0 h-auto text-blue-600"
+              onClick={() => navigate("/")}
+            >
+              Continue Shopping
+            </Button>
+          </AlertDescription>
         </Alert>
-      </Container>
+      </div>
     );
   }
 
   return (
-    <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-      <Typography variant="h4" gutterBottom>
-        Checkout
-      </Typography>
+    <div className="container max-w-6xl mx-auto mt-8 mb-8 px-4">
+      <h1 className="text-4xl font-bold mb-8">Checkout</h1>
 
-      <Box
-        sx={{
-          display: "grid",
-          gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
-          gap: 3,
-        }}
-      >
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         {/* Order Summary */}
-        <Paper sx={{ p: 3 }}>
-          <Typography variant="h6" gutterBottom>
-            Order Summary
-          </Typography>
+        <Card>
+          <CardContent className="p-6">
+            <h2 className="text-2xl font-semibold mb-6">Order Summary</h2>
 
-          {cartItems.map((item) => (
-            <Box key={item.productId} sx={{ mb: 2 }}>
-              <Box display="flex" alignItems="center" gap={2}>
-                <img
-                  src={item.image}
-                  alt={item.title}
-                  style={{ width: 80,height: 70,  objectFit: "cover" }}
-                />
-                <Box flex={1}>
-                  <Typography variant="subtitle1">{item.title}</Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    Quantity: {item.quantity} × {item.price} LYD
-                  </Typography>
-                </Box>
-                <Typography variant="subtitle1">
-                  {(item.quantity * item.price).toFixed(2)} LYD
-                </Typography>
-              </Box>
-              <Divider sx={{ mt: 1 }} />
-            </Box>
-          ))}
+            <div className="space-y-4">
+              {cartItems.map((item) => (
+                <div key={item.productId} className="space-y-2">
+                  <div className="flex items-center gap-4">
+                    <img
+                      src={item.image}
+                      alt={item.title}
+                      className="w-20 h-16 object-cover rounded-lg"
+                    />
+                    <div className="flex-1">
+                      <h3 className="text-lg font-medium">{item.title}</h3>
+                      <p className="text-gray-600">
+                        Quantity: {item.quantity} × {item.price} LYD
+                      </p>
+                    </div>
+                    <span className="text-lg font-medium">
+                      {(item.quantity * item.price).toFixed(2)} LYD
+                    </span>
+                  </div>
+                  <Separator />
+                </div>
+              ))}
 
-          <Box sx={{ mt: 2 }}>
-            <Typography variant="h6">
-              Total: {totalPrice.toFixed(2)} LYD
-            </Typography>
-          </Box>
-        </Paper>
+              <div className="pt-4">
+                <h3 className="text-2xl font-bold">
+                  Total: {totalPrice.toFixed(2)} LYD
+                </h3>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
 
         {/* Shipping Address */}
-        <Paper sx={{ p: 3 }}>
-          <Typography variant="h6" gutterBottom>
-            Shipping Address
-          </Typography>
+        <Card>
+          <CardContent className="p-6">
+            <h2 className="text-2xl font-semibold mb-6">Shipping Address</h2>
 
-          <Box component="form" noValidate sx={{ mt: 2 }}>
-            <TextField
-              fullWidth
-              label="Street Address"
-              value={address.street}
-              onChange={(e) => handleAddressChange("street", e.target.value)}
-              margin="normal"
-              required
-            />
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="street">Street Address</Label>
+                <Input
+                  id="street"
+                  value={address.street}
+                  onChange={(e) =>
+                    handleAddressChange("street", e.target.value)
+                  }
+                  placeholder="Enter your street address"
+                  required
+                />
+              </div>
 
-            <Box
-              sx={{
-                display: "grid",
-                gridTemplateColumns: "1fr 1fr",
-                gap: 2,
-                mt: 2,
-              }}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="city">City</Label>
+                  <Input
+                    id="city"
+                    value={address.city}
+                    onChange={(e) =>
+                      handleAddressChange("city", e.target.value)
+                    }
+                    placeholder="Enter your city"
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="phone">Phone Number</Label>
+                  <Input
+                    id="phone"
+                    value={address.PhoneNumber}
+                    onChange={(e) =>
+                      handleAddressChange("PhoneNumber", e.target.value)
+                    }
+                    placeholder="Enter your phone number"
+                    required
+                  />
+                </div>
+              </div>
+            </div>
+
+            {error && (
+              <Alert variant="destructive" className="mt-4">
+                <AlertDescription>{error}</AlertDescription>
+              </Alert>
+            )}
+
+            {success && (
+              <Alert className="mt-4 bg-green-50 border-green-200">
+                <AlertDescription className="text-green-700">
+                  {success}
+                </AlertDescription>
+              </Alert>
+            )}
+
+            <Button
+              onClick={handleCheckout}
+              disabled={loading}
+              className="w-full mt-6 py-4 text-lg font-semibold bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 transform hover:-translate-y-1 transition-all duration-300 shadow-lg hover:shadow-blue-500/30"
             >
-              <TextField
-                fullWidth
-                label="City"
-                value={address.city}
-                onChange={(e) => handleAddressChange("city", e.target.value)}
-                required
-              />
-              <TextField
-                fullWidth
-                label="Phone Number"
-                value={address.PhoneNumber}
-                onChange={(e) => handleAddressChange("PhoneNumber", e.target.value)}
-                required
-              />
-            </Box>
-
-            <Box
-              sx={{
-                display: "grid",
-                gridTemplateColumns: "1fr 1fr",
-                gap: 2,
-                mt: 2,
-              }}
-            >
-            </Box>
-          </Box>
-
-          {error && (
-            <Alert severity="error" sx={{ mt: 2 }}>
-              {error}
-            </Alert>
-          )}
-
-          {success && (
-            <Alert severity="success" sx={{ mt: 2 }}>
-              {success}
-            </Alert>
-          )}
-
-          <Button
-            fullWidth
-            variant="contained"
-            size="large"
-            onClick={handleCheckout}
-            disabled={loading}
-            sx={{ mt: 3 }}
-          >
-            {loading
-              ? "Processing..."
-              : `Place Order - ${totalPrice.toFixed(2)} LYD`}
-          </Button>
-        </Paper>
-      </Box>
-    </Container>
+              {loading
+                ? "Processing..."
+                : `Place Order - ${totalPrice.toFixed(2)} LYD`}
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
   );
 };
 

@@ -1,31 +1,22 @@
-import {
-  Box,
-  Container,
-  Typography,
-  Card,
-  CardContent,
-  Divider,
-  Chip,
-  Paper,
-  CircularProgress,
-  Alert,
-  Stack,
-  Grid,
-  Avatar,
-  Button,
-} from "@mui/material";
 import { useEffect, useState } from "react";
-import { useAuth } from "../context/Auth/AuthContext";
+import { useNavigate } from "react-router-dom";
 import {
   ShoppingBag,
-  LocalShipping,
-  LocationOn,
-  Inventory,
-  CalendarToday,
-  Storefront,
+  Truck,
+  MapPin,
+  Package,
+  Calendar,
+  Store,
   Receipt,
-} from "@mui/icons-material";
-import { useNavigate } from "react-router-dom";
+  Loader2,
+} from "lucide-react";
+import { Card, CardContent } from "../components/ui/card";
+import { Button } from "../components/ui/button";
+import { Badge } from "../components/ui/badge";
+import { Avatar, AvatarFallback } from "../components/ui/avatar";
+import { Alert, AlertDescription } from "../components/ui/alert";
+import { Separator } from "../components/ui/separator";
+import { useAuth } from "../context/Auth/AuthContext";
 
 interface OrderItem {
   productTitle: string;
@@ -72,239 +63,93 @@ const MyOrderPage = () => {
 
   if (loading) {
     return (
-      <Container
-        maxWidth="lg"
-        sx={{ mt: 8, display: "flex", justifyContent: "center" }}
-      >
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            gap: 3,
-          }}
-        >
-          <CircularProgress size={70} thickness={4} />
-          <Typography
-            variant="h6"
-            color="text.secondary"
-            sx={{ fontWeight: 500 }}
-          >
+      <div className="container max-w-4xl mx-auto mt-16 flex justify-center">
+        <div className="flex flex-col items-center gap-6">
+          <Loader2 className="h-16 w-16 animate-spin text-blue-500" />
+          <h3 className="text-xl font-medium text-gray-600">
             Loading your orders...
-          </Typography>
-        </Box>
-      </Container>
+          </h3>
+        </div>
+      </div>
     );
   }
 
   if (error) {
     return (
-      <Container maxWidth="lg" sx={{ mt: 4 }}>
-        <Alert
-          severity="error"
-          sx={{
-            borderRadius: 3,
-            boxShadow: 2,
-            "& .MuiAlert-icon": { fontSize: 28 },
-          }}
-        >
-          <Typography variant="h6">{error}</Typography>
+      <div className="container max-w-4xl mx-auto mt-8">
+        <Alert variant="destructive" className="rounded-2xl shadow-lg">
+          <AlertDescription className="text-base">{error}</AlertDescription>
         </Alert>
-      </Container>
+      </div>
     );
   }
 
   return (
-    <Box
-      sx={{
-        minHeight: "80vh",
-        background: "linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)",
-      }}
-    >
-      <Container maxWidth="md" sx={{ pt: 4, pb: 6 }}>
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-100">
+      <div className="container max-w-3xl mx-auto pt-8 pb-12 px-4">
         {/* Modern Header */}
-        <Box sx={{ textAlign: "center", mb: 6 }}>
-          <Box
-            sx={{
-              display: "inline-flex",
-              alignItems: "center",
-              justifyContent: "center",
-              width: 120,
-              height: 120,
-              borderRadius: "50%",
-              background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-              mb: 3,
-              boxShadow: "0 20px 40px rgba(102, 126, 234, 0.3)",
-            }}
-          >
-            <Receipt sx={{ fontSize: 60, color: "white" }} />
-          </Box>
-          <Typography
-            variant="h2"
-            gutterBottom
-            sx={{
-              fontWeight: 800,
-              background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-              backgroundClip: "text",
-              WebkitBackgroundClip: "text",
-              color: "transparent",
-              mb: 2,
-            }}
-          >
+        <div className="text-center mb-12">
+          <div className="inline-flex items-center justify-center w-28 h-28 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 mb-6 shadow-2xl shadow-blue-500/30">
+            <Receipt className="w-14 h-14 text-white" />
+          </div>
+          <h1 className="text-5xl font-extrabold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-4">
             My Orders
-          </Typography>
-          <Typography
-            variant="h5"
-            color="text.secondary"
-            sx={{ fontWeight: 400, opacity: 0.8 }}
-          >
+          </h1>
+          <p className="text-xl text-gray-600 font-medium">
             Track and manage your purchase history
-          </Typography>
+          </p>
           {myOrders && myOrders.length > 0 && (
-            <Chip
-              label={`${myOrders.length} Total Orders`}
-              sx={{
-                mt: 2,
-                px: 2,
-                py: 1,
-                fontSize: "1rem",
-                fontWeight: 600,
-                background: "rgba(102, 126, 234, 0.1)",
-                color: "#667eea",
-                border: "2px solid rgba(102, 126, 234, 0.2)",
-              }}
-            />
+            <Badge
+              variant="secondary"
+              className="mt-4 px-4 py-2 text-base font-semibold bg-blue-100 text-blue-700 border-2 border-blue-200"
+            >
+              {myOrders.length} Total Orders
+            </Badge>
           )}
-        </Box>
+        </div>
 
         {/* Orders Content */}
         {!myOrders || myOrders.length === 0 ? (
-          <Paper
-            elevation={0}
-            sx={{
-              p: 8,
-              textAlign: "center",
-              background: "white",
-              borderRadius: 4,
-              boxShadow: "0 10px 40px rgba(0,0,0,0.1)",
-              border: "1px solid rgba(0,0,0,0.05)",
-            }}
-          >
-            <Box
-              sx={{
-                display: "inline-flex",
-                alignItems: "center",
-                justifyContent: "center",
-                width: 140,
-                height: 140,
-                borderRadius: "50%",
-                background: "linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)",
-                mb: 4,
-              }}
-            >
-              <Storefront sx={{ fontSize: 80, color: "#ff6b6b" }} />
-            </Box>
-            <Typography
-              variant="h3"
-              gutterBottom
-              sx={{ fontWeight: 700, color: "#2c3e50" }}
-            >
-              No Orders Yet
-            </Typography>
-            <Typography
-              variant="h6"
-              color="text.secondary"
-              sx={{ mb: 3, maxWidth: 400, mx: "auto" }}
-            >
-              Your order history is empty. Start exploring our products and
-              place your first order!
-            </Typography>
-            <Button onClick={(handelHome)}
-              variant="contained"
-              size="large"
-              startIcon={<ShoppingBag />}
-              sx={{
-                mt: 2,
-                px: 4,
-                py: 1.5,
-                borderRadius: 3,
-                textTransform: "none",
-                fontSize: "1.1rem",
-                fontWeight: 600,
-                background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-                boxShadow: "0 8px 24px rgba(102, 126, 234, 0.3)",
-                "&:hover": {
-                  transform: "translateY(-2px)",
-                  boxShadow: "0 12px 32px rgba(102, 126, 234, 0.4)",
-                },
-              }}
-            >
-              Start Shopping
-            </Button>
-          </Paper>
+          <Card className="rounded-3xl shadow-xl bg-white border border-gray-100 overflow-hidden">
+            <CardContent className="p-16 text-center">
+              <div className="inline-flex items-center justify-center w-32 h-32 rounded-full bg-gradient-to-br from-orange-400 to-red-400 mb-8">
+                <Store className="w-16 h-16 text-white" />
+              </div>
+              <h2 className="text-4xl font-bold text-gray-800 mb-4">
+                No Orders Yet
+              </h2>
+              <p className="text-lg text-gray-600 mb-8 max-w-md mx-auto">
+                Your order history is empty. Start exploring our products and
+                place your first order!
+              </p>
+              <Button
+                onClick={handelHome}
+                size="lg"
+                className="px-8 py-4 text-lg font-semibold bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 rounded-xl shadow-xl hover:shadow-blue-500/30 transform hover:-translate-y-1 transition-all duration-300"
+              >
+                <ShoppingBag className="w-5 h-5 mr-2" />
+                Start Shopping
+              </Button>
+            </CardContent>
+          </Card>
         ) : (
-          <Stack spacing={4}>
+          <div className="space-y-8">
             {myOrders.map((order: Order) => (
               <Card
                 key={order._id}
-                elevation={0}
-                sx={{
-                  borderRadius: 4,
-                  overflow: "hidden",
-                  background: "white",
-                  boxShadow: "0 10px 40px rgba(0,0,0,0.08)",
-                  border: "1px solid rgba(0,0,0,0.05)",
-                  transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
-                  "&:hover": {
-                    transform: "translateY(-8px)",
-                    boxShadow: "0 20px 60px rgba(0,0,0,0.15)",
-                  },
-                }}
+                className="rounded-3xl overflow-hidden bg-white shadow-xl border border-gray-100 transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl"
               >
                 {/* Premium Order Header */}
-                <Box
-                  sx={{
-                    background:
-                      "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-                    color: "white",
-                    p: 4,
-                    position: "relative",
-                    overflow: "hidden",
-                    "&::before": {
-                      content: '""',
-                      position: "absolute",
-                      top: 0,
-                      right: 0,
-                      width: "100%",
-                      height: "100%",
-                      background:
-                        'url("data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%23ffffff" fill-opacity="0.1"%3E%3Ccircle cx="30" cy="30" r="4"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")',
-                    },
-                  }}
-                >
-                  <Box
-                    sx={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                      flexWrap: "wrap",
-                      gap: 3,
-                      position: "relative",
-                      zIndex: 1,
-                    }}
-                  >
-                    <Box>
-                      <Typography variant="h4" sx={{ fontWeight: 800, mb: 1 }}>
+                <div className="bg-gradient-to-r from-blue-500 to-purple-600 text-white p-8 relative overflow-hidden">
+                  <div className="absolute inset-0 opacity-20"></div>
+                  <div className="flex justify-between items-center flex-wrap gap-6 relative z-10">
+                    <div>
+                      <h3 className="text-3xl font-bold mb-2">
                         Order #{order._id.slice(-6).toUpperCase()}
-                      </Typography>
-                      <Box
-                        sx={{ display: "flex", alignItems: "center", gap: 1.5 }}
-                      >
-                        <CalendarToday sx={{ fontSize: 20 }} />
-                        <Typography
-                          variant="h6"
-                          sx={{ opacity: 0.95, fontWeight: 500 }}
-                        >
+                      </h3>
+                      <div className="flex items-center gap-3">
+                        <Calendar className="w-5 h-5" />
+                        <span className="text-lg font-medium opacity-95">
                           {order.createdAt
                             ? new Date(order.createdAt).toLocaleDateString(
                                 "en-US",
@@ -315,266 +160,130 @@ const MyOrderPage = () => {
                                 }
                               )
                             : "Recent Order"}
-                        </Typography>
-                      </Box>
-                    </Box>
-                    <Box sx={{ textAlign: "right" }}>
-                      <Chip
-                        label="✓ Delivered"
-                        icon={<LocalShipping />}
-                        sx={{
-                          backgroundColor: "rgba(255,255,255,0.25)",
-                          color: "white",
-                          fontWeight: 700,
-                          fontSize: "0.9rem",
-                          mb: 2,
-                          px: 2,
-                          py: 1,
-                          borderRadius: 3,
-                        }}
-                      />
-                      <Box
-                        sx={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: 1,
-                          justifyContent: "flex-end",
-                        }}
-                      >
-                        <Typography variant="h3" sx={{ fontWeight: 800 }}>
+                        </span>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <Badge className="bg-white/25 text-white font-bold text-sm mb-4 px-4 py-2 hover:bg-white/25">
+                        <Truck className="w-4 h-4 mr-1" />✓ Delivered
+                      </Badge>
+                      <div className="flex items-center gap-2 justify-end">
+                        <span className="text-4xl font-bold">
                           {order.totalPrice}
-                        </Typography>
-                        <Typography
-                          variant="h5"
-                          sx={{ fontWeight: 600, opacity: 0.9 }}
-                        >
+                        </span>
+                        <span className="text-xl font-semibold opacity-90">
                           LYD
-                        </Typography>
-                      </Box>
-                    </Box>
-                  </Box>
-                </Box>
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
 
-                <CardContent sx={{ p: 4 }}>
+                <CardContent className="p-8">
                   {/* Enhanced Order Info Grid */}
-                  <Grid container spacing={4} sx={{ mb: 4 }}>
-                    <Grid size={{ xs: 12, md: 6 }}>
-                      <Paper
-                        elevation={0}
-                        sx={{
-                          p: 3,
-                          background:
-                            "linear-gradient(135deg, #f8f9ff 0%, #e3f2fd 100%)",
-                          borderRadius: 3,
-                          border: "1px solid rgba(0,0,0,0.05)",
-                        }}
-                      >
-                        <Box
-                          sx={{
-                            display: "flex",
-                            alignItems: "center",
-                            gap: 2,
-                            mb: 2,
-                          }}
-                        >
-                          <Avatar
-                            sx={{ bgcolor: "#1976d2", width: 48, height: 48 }}
-                          >
-                            <LocationOn sx={{ fontSize: 24 }} />
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <Card className="bg-gradient-to-br from-blue-50 to-indigo-50 border-blue-100 rounded-2xl">
+                      <CardContent className="p-6">
+                        <div className="flex items-center gap-4 mb-4">
+                          <Avatar className="w-12 h-12 bg-blue-500">
+                            <AvatarFallback>
+                              <MapPin className="w-6 h-6 text-white" />
+                            </AvatarFallback>
                           </Avatar>
-                          <Typography
-                            variant="h6"
-                            sx={{ fontWeight: 700, color: "#1976d2" }}
-                          >
+                          <h4 className="text-lg font-bold text-blue-700">
                             Delivery Address
-                          </Typography>
-                        </Box>
-                        <Typography
-                          variant="body1"
-                          sx={{
-                            fontWeight: 500,
-                            lineHeight: 1.6,
-                            color: "#424242",
-                          }}
-                        >
+                          </h4>
+                        </div>
+                        <p className="text-gray-700 font-medium leading-relaxed">
                           {order.address}
-                        </Typography>
-                      </Paper>
-                    </Grid>
-                    <Grid size={{ xs: 12, md: 6 }}>
-                      <Paper
-                        elevation={0}
-                        sx={{
-                          p: 3,
-                          background:
-                            "linear-gradient(135deg, #f3e5f5 0%, #e1f5fe 100%)",
-                          borderRadius: 3,
-                          border: "1px solid rgba(0,0,0,0.05)",
-                        }}
-                      >
-                        <Box
-                          sx={{
-                            display: "flex",
-                            alignItems: "center",
-                            gap: 2,
-                            mb: 2,
-                          }}
-                        >
-                          <Avatar
-                            sx={{ bgcolor: "#9c27b0", width: 48, height: 48 }}
-                          >
-                            <Inventory sx={{ fontSize: 24 }} />
+                        </p>
+                      </CardContent>
+                    </Card>
+
+                    <Card className="bg-gradient-to-br from-purple-50 to-pink-50 border-purple-100 rounded-2xl">
+                      <CardContent className="p-6">
+                        <div className="flex items-center gap-4 mb-4">
+                          <Avatar className="w-12 h-12 bg-purple-500">
+                            <AvatarFallback>
+                              <Package className="w-6 h-6 text-white" />
+                            </AvatarFallback>
                           </Avatar>
-                          <Typography
-                            variant="h6"
-                            sx={{ fontWeight: 700, color: "#9c27b0" }}
-                          >
+                          <h4 className="text-lg font-bold text-purple-700">
                             Order Summary
-                          </Typography>
-                        </Box>
-                        <Stack spacing={1}>
-                          <Typography
-                            variant="body1"
-                            sx={{ fontWeight: 600, color: "#424242" }}
-                          >
+                          </h4>
+                        </div>
+                        <div className="space-y-2">
+                          <p className="text-gray-700 font-semibold">
                             Items: {order.orderItems.length}
-                          </Typography>
-
-                          <Typography
-                            variant="body1"
-                            sx={{ fontWeight: 600, color: "#424242" }}
-                          >
+                          </p>
+                          <p className="text-gray-700 font-semibold">
                             Payment: Completed 💳
-                          </Typography>
-                        </Stack>
-                      </Paper>
-                    </Grid>
-                  </Grid>
+                          </p>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </div>
 
-                  <Divider sx={{ my: 4, borderColor: "rgba(0,0,0,0.08)" }} />
+                  <Separator className="my-8 bg-gray-200" />
 
                   {/* Modern Items Section */}
-                  <Box sx={{ mb: 3 }}>
-                    <Typography
-                      variant="h6"
-                      sx={{ fontWeight: 700, mb: 3, color: "#2c3e50" }}
-                    >
+                  <div className="mb-6">
+                    <h4 className="text-xl font-bold text-gray-800 mb-6">
                       Order Items ({order.orderItems.length})
-                    </Typography>
+                    </h4>
 
-                    <Stack spacing={2}>
+                    <div className="space-y-4">
                       {order.orderItems.map(
                         (item: OrderItem, itemIndex: number) => (
-                          <Paper
+                          <Card
                             key={itemIndex}
-                            elevation={1}
-                            sx={{
-                              p: 3,
-                              borderRadius: 3,
-                              background: "white",
-                              border: "1px solid #f0f0f0",
-                              transition: "all 0.3s ease",
-                              "&:hover": {
-                                borderColor: "#667eea",
-                                boxShadow:
-                                  "0 8px 24px rgba(102, 126, 234, 0.12)",
-                                transform: "translateY(-2px)",
-                              },
-                            }}
+                            className="bg-white border border-gray-150 rounded-2xl transition-all duration-300 hover:border-blue-300 hover:shadow-lg hover:-translate-y-1"
                           >
-                            <Box sx={{ display: "flex", gap: 3 }}>
-                              <Box
-                                component="img"
-                                src={item.image}
-                                alt={item.productTitle}
-                                sx={{
-                                  width: 80,
-                                  height: 80,
-                                  objectFit: "cover",
-                                  borderRadius: 2,
-                                  flexShrink: 0,
-                                  boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
-                                }}
-                              />
-                              <Box sx={{ flex: 1, minWidth: 0 }}>
-                                <Typography
-                                  variant="h6"
-                                  sx={{
-                                    fontWeight: 600,
-                                    mb: 1,
-                                    color: "#2c3e50",
-                                    lineHeight: 1.3,
-                                  }}
-                                >
-                                  {item.productTitle}
-                                </Typography>
-                                <Box
-                                  sx={{
-                                    display: "flex",
-                                    gap: 2,
-                                    alignItems: "center",
-                                    mb: 2,
-                                  }}
-                                >
-                                  <Chip
-                                    label={`Qty: ${item.quantity}`}
-                                    size="small"
-                                    sx={{
-                                      backgroundColor: "#e3f2fd",
-                                      color: "#1976d2",
-                                      fontWeight: 600,
-                                    }}
-                                  />
-                                  <Typography
-                                    variant="body2"
-                                    sx={{
-                                      color: "#666",
-                                      fontWeight: 500,
-                                    }}
-                                  >
-                                    {item.unitPrice} LYD each
-                                  </Typography>
-                                </Box>
-                                <Box
-                                  sx={{
-                                    display: "flex",
-
-                                    alignItems: "center",
-                                  }}
-                                >
-                                  <Typography
-                                    variant="body2"
-                                    sx={{
-                                      color: "#666",
-                                      fontWeight: 700,
-                                    }}
-                                  >
-                                    Subtotal:
-                                  </Typography>
-                                  <Typography
-                                    variant="body2"
-                                    sx={{
-                                      fontWeight: 700,
-                                      color: "#666",
-                                    }}
-                                  >
-                                    {item.unitPrice * item.quantity} LYD
-                                  </Typography>
-                                </Box>
-                              </Box>
-                            </Box>
-                          </Paper>
+                            <CardContent className="p-6">
+                              <div className="flex gap-6">
+                                <img
+                                  src={item.image}
+                                  alt={item.productTitle}
+                                  className="w-20 h-20 object-cover rounded-xl shadow-md flex-shrink-0"
+                                />
+                                <div className="flex-1 min-w-0">
+                                  <h5 className="text-lg font-semibold text-gray-800 mb-2 line-clamp-2">
+                                    {item.productTitle}
+                                  </h5>
+                                  <div className="flex gap-4 items-center mb-3">
+                                    <Badge
+                                      variant="secondary"
+                                      className="bg-blue-100 text-blue-700 font-semibold"
+                                    >
+                                      Qty: {item.quantity}
+                                    </Badge>
+                                    <span className="text-gray-600 font-medium">
+                                      {item.unitPrice} LYD each
+                                    </span>
+                                  </div>
+                                  <div className="flex items-center gap-2">
+                                    <span className="text-gray-600 font-bold">
+                                      Subtotal:
+                                    </span>
+                                    <span className="font-bold text-gray-800">
+                                      {item.unitPrice * item.quantity} LYD
+                                    </span>
+                                  </div>
+                                </div>
+                              </div>
+                            </CardContent>
+                          </Card>
                         )
                       )}
-                    </Stack>
-                  </Box>
+                    </div>
+                  </div>
                 </CardContent>
               </Card>
             ))}
-          </Stack>
+          </div>
         )}
-      </Container>
-    </Box>
+      </div>
+    </div>
   );
 };
 

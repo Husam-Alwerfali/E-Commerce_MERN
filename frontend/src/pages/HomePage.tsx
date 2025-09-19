@@ -1,14 +1,5 @@
-import {
-  Box,
-  Container,
-  Grid,
-  Typography,
-  Paper,
-  CircularProgress,
-  Fade,
-  Divider,
-} from "@mui/material";
-import { ShoppingBag, TrendingUp, Star } from "@mui/icons-material";
+import { Separator } from "../components/ui/separator";
+import { ShoppingBag, TrendingUp, Star, Loader2 } from "lucide-react";
 import ProductCard from "../components/ProductCard";
 import { useEffect, useState } from "react";
 import type { Product } from "../types/Product";
@@ -38,156 +29,86 @@ const HomePage = () => {
 
   if (error) {
     return (
-      <Box
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        minHeight="60vh"
-        flexDirection="column"
-        gap={2}
-      >
-        <ShoppingBag sx={{ fontSize: 60, color: "text.secondary" }} />
-        <Typography variant="h6" color="text.secondary">
+      <div className="flex justify-center items-center min-h-[60vh] flex-col gap-4">
+        <ShoppingBag className="w-16 h-16 text-gray-400" />
+        <h2 className="text-xl font-medium text-gray-600">
           Something went wrong, Please try again!
-        </Typography>
-      </Box>
+        </h2>
+      </div>
     );
   }
 
   if (loading) {
     return (
-      <Box
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        minHeight="60vh"
-        flexDirection="column"
-        gap={2}
-      >
-        <CircularProgress size={60} />
-        <Typography variant="h6" color="text.secondary">
+      <div className="flex justify-center items-center min-h-[60vh] flex-col gap-4">
+        <Loader2 className="w-16 h-16 text-blue-600 animate-spin" />
+        <h2 className="text-xl font-medium text-gray-600">
           Loading amazing products...
-        </Typography>
-      </Box>
+        </h2>
+      </div>
     );
   }
 
   return (
-    <Box sx={{ minHeight: "100vh", bgcolor: "#fafafa" }}>
+    <div className="min-h-screen bg-gray-50">
       {/* Hero Section */}
-      <Paper
-        sx={{
-          background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-          color: "white",
-          py: 8,
-          mb: 4,
-          borderRadius: 0,
-        }}
-      >
-        <Container maxWidth="lg">
-          <Fade in timeout={1000}>
-            <Box textAlign="center">
-              <ShoppingBag sx={{ fontSize: 80, mb: 2, opacity: 0.9 }} />
-              <Typography
-                variant="h2"
-                component="h1"
-                gutterBottom
-                sx={{
-                  fontWeight: 700,
-                  fontSize: { xs: "2.5rem", md: "3.5rem" },
-                  textShadow: "0 2px 4px rgba(0,0,0,0.3)",
-                }}
-              >
-                Welcome to Our Store
-              </Typography>
-              <Typography
-                variant="h5"
-                sx={{
-                  opacity: 0.9,
-                  fontWeight: 300,
-                  fontSize: { xs: "1.2rem", md: "1.5rem" },
-                }}
-              >
-                Discover amazing products at unbeatable prices
-              </Typography>
-            </Box>
-          </Fade>
-        </Container>
-      </Paper>
+      <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-16 mb-8">
+        <div className="container mx-auto px-4">
+          <div className="text-center animate-in fade-in-50 duration-1000">
+            <ShoppingBag className="w-20 h-20 mx-auto mb-4 opacity-90" />
+            <h1 className="text-4xl md:text-6xl font-bold mb-4 text-shadow">
+              Welcome to Our Store
+            </h1>
+            <p className="text-xl md:text-2xl opacity-90 font-light">
+              Discover amazing products at unbeatable prices
+            </p>
+          </div>
+        </div>
+      </div>
 
       {/* Products Section */}
-      <Container maxWidth="xl" sx={{ pb: 6 }}>
-        <Box sx={{ mb: 4, textAlign: "center" }}>
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              mb: 2,
-            }}
-          >
-            <Star sx={{ fontSize: 32, color: "#ff6b6b", mr: 1 }} />
-            <Typography
-              variant="h3"
-              component="h2"
-              sx={{
-                fontWeight: 600,
-                color: "#2c3e50",
-                fontSize: { xs: "2rem", md: "2.5rem" },
-              }}
-            >
+      <div className="container mx-auto px-4 pb-12">
+        <div className="mb-8 text-center">
+          <div className="flex items-center justify-center mb-4">
+            <Star className="w-8 h-8 text-red-500 mr-2" />
+            <h2 className="text-3xl md:text-4xl font-semibold text-gray-800">
               Featured Products
-            </Typography>
-            <Star sx={{ fontSize: 32, color: "#ff6b6b", ml: 1 }} />
-          </Box>
+            </h2>
+            <Star className="w-8 h-8 text-red-500 ml-2" />
+          </div>
 
-          <Divider
-            sx={{
-              width: 100,
-              height: 4,
-              bgcolor: "#ff6b6b",
-              mx: "auto",
-              mb: 2,
-              borderRadius: 2,
-            }}
-          />
+          <Separator className="w-24 h-1 bg-red-500 mx-auto mb-4" />
 
-          <Typography
-            variant="h6"
-            color="text.secondary"
-            sx={{ maxWidth: 600, mx: "auto", lineHeight: 1.6 }}
-          >
+          <p className="text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed">
             Carefully curated collection of premium products just for you
-          </Typography>
-        </Box>
+          </p>
+        </div>
 
-        <Fade in timeout={1500}>
-          <Grid container spacing={4}>
+        <div className="animate-in fade-in-50 duration-1500">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {products.map((product, index) => (
-              <Grid key={product._id} size={{ xs: 12, sm: 6, md: 4, lg: 3 }}>
-                <Fade in timeout={1500 + index * 200}>
-                  <Box>
-                    <ProductCard {...product} />
-                  </Box>
-                </Fade>
-              </Grid>
+              <div
+                key={product._id}
+                className="animate-in slide-in-from-bottom-4 duration-500"
+                style={{ animationDelay: `${index * 100}ms` }}
+              >
+                <ProductCard {...product} />
+              </div>
             ))}
-          </Grid>
-        </Fade>
+          </div>
+        </div>
 
         {products.length === 0 && !loading && !error && (
-          <Box sx={{ textAlign: "center", py: 8 }}>
-            <TrendingUp sx={{ fontSize: 80, color: "text.secondary", mb: 2 }} />
-            <Typography variant="h5" color="text.secondary" gutterBottom>
+          <div className="text-center py-16">
+            <TrendingUp className="w-20 h-20 text-gray-400 mx-auto mb-4" />
+            <h3 className="text-2xl font-medium text-gray-600 mb-2">
               No products available yet
-            </Typography>
-            <Typography variant="body1" color="text.secondary">
-              Check back soon for amazing deals!
-            </Typography>
-          </Box>
+            </h3>
+            <p className="text-gray-500">Check back soon for amazing deals!</p>
+          </div>
         )}
-      </Container>
-    </Box>
+      </div>
+    </div>
   );
 };
 

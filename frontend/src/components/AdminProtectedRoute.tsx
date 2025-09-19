@@ -1,5 +1,5 @@
 import { Navigate, Outlet } from "react-router-dom";
-import { Box, CircularProgress } from "@mui/material";
+import { Loader2 } from "lucide-react";
 import { useAuth } from "../context/Auth/AuthContext";
 
 const AdminProtectedRoute = () => {
@@ -8,16 +8,9 @@ const AdminProtectedRoute = () => {
   // Show loading while decoding JWT token
   if (isLoadingAuth) {
     return (
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          minHeight: "100vh",
-        }}
-      >
-        <CircularProgress size={60} sx={{ color: "#667eea" }} />
-      </Box>
+      <div className="flex justify-center items-center min-h-screen">
+        <Loader2 className="h-16 w-16 animate-spin text-blue-500" />
+      </div>
     );
   }
 

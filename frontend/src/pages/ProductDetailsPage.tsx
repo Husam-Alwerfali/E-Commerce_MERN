@@ -1,29 +1,20 @@
-import {
-  Box,
-  Container,
-  Typography,
-  Button,
-  Paper,
-  CardMedia,
-  Grid,
-  Chip,
-  Divider,
-  Alert,
-  Fade,
-  IconButton,
-  CircularProgress,
-} from "@mui/material";
-import {
-  ArrowBack,
-  ShoppingCart,
-  Inventory,
-  Star,
-  LocalShipping,
-  Security,
-  Support,
-} from "@mui/icons-material";
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import {
+  ArrowLeft,
+  ShoppingCart,
+  Package,
+  Star,
+  Truck,
+  Shield,
+  Headphones,
+  Loader2,
+} from "lucide-react";
+import { Button } from "../components/ui/button";
+import { Card, CardContent } from "../components/ui/card";
+import { Badge } from "../components/ui/badge";
+import { Alert, AlertDescription } from "../components/ui/alert";
+import { Separator } from "../components/ui/separator";
 import { useAuth } from "../context/Auth/AuthContext";
 import { useCart } from "../context/Cart/CartContext";
 import { BASE_URL } from "../api/baseUrl";
@@ -102,303 +93,157 @@ const ProductDetailsPage = () => {
 
   if (loading) {
     return (
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          minHeight: "100vh",
-          bgcolor: "#fafafa",
-        }}
-      >
-        <CircularProgress size={60} sx={{ color: "#667eea" }} />
-      </Box>
+      <div className="flex justify-center items-center min-h-screen bg-gray-50">
+        <Loader2 className="h-16 w-16 animate-spin text-blue-500" />
+      </div>
     );
   }
 
   if (error || !product) {
     return (
-      <Container maxWidth="md" sx={{ py: 8, textAlign: "center" }}>
-        <Alert severity="error" sx={{ mb: 4 }}>
-          {error || "Product not found"}
+      <div className="container max-w-2xl mx-auto py-16 text-center px-4">
+        <Alert variant="destructive" className="mb-8">
+          <AlertDescription>{error || "Product not found"}</AlertDescription>
         </Alert>
         <Button
-          variant="contained"
           onClick={handleBackToProducts}
-          startIcon={<ArrowBack />}
-          sx={{
-            background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-            "&:hover": {
-              background: "linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%)",
-            },
-          }}
+          className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700"
         >
+          <ArrowLeft className="w-4 h-4 mr-2" />
           Back to Products
         </Button>
-      </Container>
+      </div>
     );
   }
 
   return (
-    <Box sx={{ minHeight: "100vh", bgcolor: "#fafafa", py: 4 }}>
-      <Container maxWidth="lg">
+    <div className="min-h-screen bg-gray-50 py-8">
+      <div className="container max-w-6xl mx-auto px-4">
         {/* Back Button */}
-        <Box sx={{ mb: 3 }}>
-          <IconButton
+        <div className="mb-6">
+          <Button
             onClick={handleBackToProducts}
-            sx={{
-              bgcolor: "white",
-              boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
-              "&:hover": {
-                bgcolor: "#f5f5f5",
-                transform: "translateY(-2px)",
-                boxShadow: "0 6px 16px rgba(0,0,0,0.15)",
-              },
-              transition: "all 0.3s ease-in-out",
-              mb: 2,
-            }}
+            variant="outline"
+            size="sm"
+            className="bg-white shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 border-blue-200 text-blue-600 hover:bg-blue-50"
           >
-            <ArrowBack sx={{ color: "#667eea" }} />
-          </IconButton>
-        </Box>
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Back to Products
+          </Button>
+        </div>
 
-        <Fade in timeout={800}>
-          <Paper
-            sx={{
-              borderRadius: 4,
-              overflow: "hidden",
-              boxShadow: "0 20px 60px rgba(0,0,0,0.1)",
-              background: "rgba(255,255,255,0.95)",
-              backdropFilter: "blur(20px)",
-              border: "1px solid rgba(255,255,255,0.2)",
-            }}
-          >
-            <Grid container>
-              {/* Product Image */}
-              <Grid size={{ xs: 12, md: 6 }}>
-                <Box
-                  sx={{ position: "relative", height: { xs: 300, md: 500 } }}
-                >
-                  <CardMedia
-                    component="img"
-                    image={product.image}
-                    alt={product.title}
-                    sx={{
-                      width: "100%",
-                      height: "100%",
-                      objectFit: "cover",
-                    }}
+        <Card className="rounded-3xl overflow-hidden shadow-2xl bg-white/95 backdrop-blur-sm border border-white/20">
+          <div className="grid grid-cols-1 md:grid-cols-2">
+            {/* Product Image */}
+            <div className="relative">
+              <img
+                src={product.image}
+                alt={product.title}
+                className="w-full h-80 md:h-[500px] object-cover"
+              />
+
+              {/* Stock Badge */}
+              <Badge
+                variant={product.stock > 0 ? "secondary" : "destructive"}
+                className="absolute top-4 right-4 font-semibold backdrop-blur-sm px-3 py-1"
+              >
+                <Package className="w-4 h-4 mr-1" />
+                {product.stock > 0
+                  ? `${product.stock} in stock`
+                  : "Out of stock"}
+              </Badge>
+            </div>
+
+            {/* Product Details */}
+            <CardContent className="p-8 flex flex-col h-full">
+              {/* Product Title */}
+              <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent leading-tight">
+                {product.title}
+              </h1>
+
+              {/* Rating */}
+              <div className="flex items-center mb-6">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <Star
+                    key={star}
+                    className="w-5 h-5 fill-yellow-400 text-yellow-400"
                   />
+                ))}
+                <span className="ml-2 text-gray-600">(4.8) 127 reviews</span>
+              </div>
 
-                  {/* Stock Badge */}
-                  <Chip
-                    label={
-                      product.stock > 0
-                        ? `${product.stock} in stock`
-                        : "Out of stock"
-                    }
-                    color={product.stock > 0 ? "success" : "error"}
-                    icon={<Inventory />}
-                    sx={{
-                      position: "absolute",
-                      top: 16,
-                      right: 16,
-                      fontWeight: 600,
-                      backdropFilter: "blur(10px)",
-                      bgcolor:
-                        product.stock > 0
-                          ? "rgba(76, 175, 80, 0.9)"
-                          : "rgba(244, 67, 54, 0.9)",
-                      color: "white",
-                    }}
-                  />
-                </Box>
-              </Grid>
+              {/* Price */}
+              <div className="text-4xl font-bold text-blue-600 mb-6">
+                {product.price} LYD
+              </div>
 
-              {/* Product Details */}
-              <Grid size={{ xs: 12, md: 6 }}>
-                <Box
-                  sx={{
-                    p: { xs: 3, md: 4 },
-                    height: "100%",
-                    display: "flex",
-                    flexDirection: "column",
-                  }}
+              {/* Description */}
+              <p className="text-gray-700 text-lg leading-relaxed mb-6 flex-1">
+                {product.description}
+              </p>
+
+              {/* Success/Error Messages */}
+              {success && (
+                <Alert className="mb-6 bg-green-50 border-green-200">
+                  <AlertDescription className="text-green-700">
+                    {success}
+                  </AlertDescription>
+                </Alert>
+              )}
+
+              {error && (
+                <Alert variant="destructive" className="mb-6">
+                  <AlertDescription>{error}</AlertDescription>
+                </Alert>
+              )}
+
+              {/* Add to Cart Button */}
+              <div className="mt-auto">
+                <Button
+                  onClick={handleAddToCart}
+                  disabled={product.stock === 0 || addingToCart}
+                  className="w-full py-4 text-xl font-semibold bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 transform hover:-translate-y-1 transition-all duration-300 shadow-lg hover:shadow-blue-500/30 rounded-xl mb-6"
                 >
-                  {/* Product Title */}
-                  <Typography
-                    variant="h4"
-                    sx={{
-                      fontWeight: 700,
-                      mb: 2,
-                      background:
-                        "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-                      backgroundClip: "text",
-                      WebkitBackgroundClip: "text",
-                      WebkitTextFillColor: "transparent",
-                      lineHeight: 1.3,
-                    }}
-                  >
-                    {product.title}
-                  </Typography>
-
-                  {/* Rating (placeholder) */}
-                  <Box sx={{ display: "flex", alignItems: "center", mb: 3 }}>
-                    {[1, 2, 3, 4, 5].map((star) => (
-                      <Star
-                        key={star}
-                        sx={{ color: "#ffd700", fontSize: 20 }}
-                      />
-                    ))}
-                    <Typography variant="body2" sx={{ ml: 1, color: "#666" }}>
-                      (4.8) 127 reviews
-                    </Typography>
-                  </Box>
-
-                  {/* Price */}
-                  <Typography
-                    variant="h3"
-                    sx={{
-                      fontWeight: 700,
-                      color: "#667eea",
-                      mb: 3,
-                      textShadow: "0 2px 4px rgba(102,126,234,0.2)",
-                    }}
-                  >
-                    {product.price} LYD
-                  </Typography>
-
-                  {/* Description */}
-                  <Typography
-                    variant="body1"
-                    sx={{
-                      color: "#666",
-                      lineHeight: 1.8,
-                      mb: 4,
-                      fontSize: "1.1rem",
-                    }}
-                  >
-                    {product.description}
-                  </Typography>
-
-                  {/* Success/Error Messages */}
-                  {success && (
-                    <Fade in timeout={300}>
-                      <Alert severity="success" sx={{ mb: 3, borderRadius: 2 }}>
-                        {success}
-                      </Alert>
-                    </Fade>
+                  {addingToCart ? (
+                    <>
+                      <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                      Adding...
+                    </>
+                  ) : product.stock > 0 ? (
+                    <>
+                      <ShoppingCart className="w-5 h-5 mr-2" />
+                      Add to Cart
+                    </>
+                  ) : (
+                    "Out of Stock"
                   )}
+                </Button>
 
-                  {error && (
-                    <Fade in timeout={300}>
-                      <Alert severity="error" sx={{ mb: 3, borderRadius: 2 }}>
-                        {error}
-                      </Alert>
-                    </Fade>
-                  )}
+                {/* Features */}
+                <Separator className="my-6" />
 
-                  {/* Add to Cart Button */}
-                  <Box sx={{ mt: "auto" }}>
-                    <Button
-                      onClick={handleAddToCart}
-                      disabled={product.stock === 0 || addingToCart}
-                      variant="contained"
-                      size="large"
-                      fullWidth
-                      startIcon={
-                        addingToCart ? (
-                          <CircularProgress size={20} color="inherit" />
-                        ) : (
-                          <ShoppingCart />
-                        )
-                      }
-                      sx={{
-                        py: 2,
-                        fontSize: "1.2rem",
-                        fontWeight: 600,
-                        background:
-                          product.stock > 0
-                            ? "linear-gradient(135deg, #667eea 0%, #764ba2 100%)"
-                            : "rgba(0,0,0,0.12)",
-                        color: "white",
-                        borderRadius: 3,
-                        textTransform: "none",
-                        mb: 3,
-                        "&:hover": {
-                          background:
-                            product.stock > 0
-                              ? "linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%)"
-                              : "rgba(0,0,0,0.12)",
-                          transform:
-                            product.stock > 0 ? "translateY(-2px)" : "none",
-                          boxShadow:
-                            product.stock > 0
-                              ? "0 8px 25px rgba(102,126,234,0.4)"
-                              : "none",
-                        },
-                        transition: "all 0.3s ease-in-out",
-                      }}
-                    >
-                      {addingToCart
-                        ? "Adding..."
-                        : product.stock > 0
-                        ? "Add to Cart"
-                        : "Out of Stock"}
-                    </Button>
-
-                    {/* Features */}
-                    <Divider sx={{ my: 3 }} />
-
-                    <Box
-                      sx={{
-                        display: "flex",
-                        justifyContent: "space-around",
-                        textAlign: "center",
-                      }}
-                    >
-                      <Box>
-                        <LocalShipping
-                          sx={{ fontSize: 32, color: "#667eea", mb: 1 }}
-                        />
-                        <Typography
-                          variant="caption"
-                          sx={{ fontWeight: 600, display: "block" }}
-                        >
-                          Free Shipping
-                        </Typography>
-                      </Box>
-                      <Box>
-                        <Security
-                          sx={{ fontSize: 32, color: "#667eea", mb: 1 }}
-                        />
-                        <Typography
-                          variant="caption"
-                          sx={{ fontWeight: 600, display: "block" }}
-                        >
-                          Secure Payment
-                        </Typography>
-                      </Box>
-                      <Box>
-                        <Support
-                          sx={{ fontSize: 32, color: "#667eea", mb: 1 }}
-                        />
-                        <Typography
-                          variant="caption"
-                          sx={{ fontWeight: 600, display: "block" }}
-                        >
-                          24/7 Support
-                        </Typography>
-                      </Box>
-                    </Box>
-                  </Box>
-                </Box>
-              </Grid>
-            </Grid>
-          </Paper>
-        </Fade>
-      </Container>
-    </Box>
+                <div className="flex justify-around text-center">
+                  <div className="flex flex-col items-center">
+                    <Truck className="w-8 h-8 text-blue-500 mb-2" />
+                    <span className="text-xs font-semibold">Free Shipping</span>
+                  </div>
+                  <div className="flex flex-col items-center">
+                    <Shield className="w-8 h-8 text-blue-500 mb-2" />
+                    <span className="text-xs font-semibold">
+                      Secure Payment
+                    </span>
+                  </div>
+                  <div className="flex flex-col items-center">
+                    <Headphones className="w-8 h-8 text-blue-500 mb-2" />
+                    <span className="text-xs font-semibold">24/7 Support</span>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </div>
+        </Card>
+      </div>
+    </div>
   );
 };
 
