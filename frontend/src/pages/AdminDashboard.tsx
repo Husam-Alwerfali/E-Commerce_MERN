@@ -5,7 +5,6 @@ import { z } from "zod";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   Plus,
-  Settings,
   Package,
   TrendingUp,
   BarChart3,
@@ -20,7 +19,6 @@ import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
 import { Badge } from "../components/ui/badge";
 import { Alert, AlertDescription } from "../components/ui/alert";
-import { Separator } from "../components/ui/separator";
 import {
   Table,
   TableBody,
@@ -182,6 +180,7 @@ const AdminDashboard = () => {
   const [success, setSuccess] = useState("");
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
+  const [dialogOpen, setDialogOpen] = useState(false);
   const queryClient = useQueryClient();
 
   // React Hook Form setup
@@ -432,8 +431,26 @@ const AdminDashboard = () => {
         {/* Products Management Section */}
         <Card className="mb-8">
           <CardContent className="p-6">
-            <h2 className="text-2xl font-semibold mb-4">Manage Products</h2>
-
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-2xl font-semibold">Manage Products</h2>
+              <Button
+                variant="default"
+                onClick={() => {
+                  setEditingProduct(null);
+                  reset({
+                    name: "",
+                    description: "",
+                    price: "",
+                    image: "",
+                    stock: "",
+                  });
+                  setDialogOpen(true);
+                }}
+                className="flex gap-2"
+              >
+                <Plus className="w-5 h-5" /> Add Product
+              </Button>
+            </div>
             {productsLoading ? (
               <div className="flex justify-center py-8">
                 <Loader2 className="h-10 w-10 animate-spin" />
@@ -500,7 +517,10 @@ const AdminDashboard = () => {
                           <Button
                             variant="outline"
                             size="sm"
-                            onClick={() => handleEditProduct(product)}
+                            onClick={() => {
+                              handleEditProduct(product);
+                              setDialogOpen(true);
+                            }}
                             className="text-blue-600 border-blue-200 hover:bg-blue-50"
                           >
                             <Edit className="w-4 h-4" />
@@ -522,42 +542,37 @@ const AdminDashboard = () => {
             ) : (
               <Alert>
                 <AlertDescription>
-                  No products found. Add your first product below!
+                  No products found. Add your first product above!
                 </AlertDescription>
               </Alert>
             )}
           </CardContent>
         </Card>
 
-        <Separator className="my-8" />
-
-        {/* Add/Edit Product Form */}
-        <Card className="rounded-3xl overflow-hidden shadow-2xl bg-white/95 backdrop-blur-sm border border-white/20">
-          {/* Header Section */}
-          <div
-            className={`text-white p-8 text-center ${
-              editingProduct
-                ? "bg-gradient-to-r from-orange-500 to-orange-600"
-                : "bg-gradient-to-r from-blue-500 to-purple-600"
-            }`}
-          >
-            <Settings className="w-16 h-16 mx-auto mb-4 opacity-90" />
-            <h2 className="text-3xl font-bold mb-2">
-              {editingProduct ? "Edit Product" : "Add New Product"}
-            </h2>
-            <p className="text-lg opacity-90">
-              {editingProduct
-                ? `Update "${editingProduct.title}" details`
-                : "Add products to your store inventory"}
-            </p>
-          </div>
-
-          {/*===== Edit Section ==== */}
-          <CardContent className="p-8">
+        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>
+                {editingProduct ? "Edit Product" : "Add New Product"}
+              </DialogTitle>
+              <DialogDescription>
+                {editingProduct
+                  ? `Update "${editingProduct.title}" details`
+                  : "Add products to your store inventory"}
+              </DialogDescription>
+            </DialogHeader>
             <form
               id="product-form"
               onSubmit={handleSubmit(
-                editingProduct ? handleUpdateProduct : onSubmit
+                editingProduct
+                  ? (data) => {
+                      handleUpdateProduct(data);
+                      setDialogOpen(false);
+                    }
+                  : (data) => {
+                      onSubmit(data);
+                      setDialogOpen(false);
+                    }
               )}
               className="space-y-6"
             >
@@ -585,7 +600,6 @@ const AdminDashboard = () => {
                     )}
                   />
                 </div>
-
                 {/* Stock */}
                 <div className="space-y-2">
                   <Label htmlFor="stock">Stock Quantity</Label>
@@ -611,7 +625,6 @@ const AdminDashboard = () => {
                   />
                 </div>
               </div>
-
               {/* Description */}
               <div className="space-y-2">
                 <Label htmlFor="description">Product Description</Label>
@@ -640,7 +653,6 @@ const AdminDashboard = () => {
                   )}
                 />
               </div>
-
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Price */}
                 <div className="space-y-2">
@@ -668,7 +680,6 @@ const AdminDashboard = () => {
                     )}
                   />
                 </div>
-
                 {/* Image URL */}
                 <div className="space-y-2">
                   <Label htmlFor="image">Image URL</Label>
@@ -694,7 +705,6 @@ const AdminDashboard = () => {
                   />
                 </div>
               </div>
-
               {/* Success Alert */}
               {success && (
                 <Alert className="bg-green-50 border-green-200">
@@ -703,7 +713,6 @@ const AdminDashboard = () => {
                   </AlertDescription>
                 </Alert>
               )}
-
               {/* Error Alert */}
               {(addProductMutation.error ||
                 updateProductMutation.error ||
@@ -716,18 +725,19 @@ const AdminDashboard = () => {
                   </AlertDescription>
                 </Alert>
               )}
-
               {/* Submit Buttons */}
               <div className="flex gap-4">
                 {editingProduct && (
                   <Button
                     type="button"
                     variant="outline"
-                    onClick={cancelEdit}
+                    onClick={() => {
+                      cancelEdit();
+                      setDialogOpen(false);
+                    }}
                     className="flex-1"
                   >
-                    <X className="w-4 h-4 mr-2" />
-                    Cancel
+                    <X className="w-4 h-4 mr-2" /> Cancel
                   </Button>
                 )}
                 <Button
@@ -761,9 +771,8 @@ const AdminDashboard = () => {
                 </Button>
               </div>
             </form>
-          </CardContent>
-          {/*===== Edit Section ==== */}
-        </Card>
+          </DialogContent>
+        </Dialog>
 
         {/* Delete Confirmation Dialog */}
         <Dialog
