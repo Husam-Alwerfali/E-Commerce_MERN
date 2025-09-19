@@ -16,16 +16,14 @@ import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
 import { Alert, AlertDescription } from "../components/ui/alert";
 import { Separator } from "../components/ui/separator";
-import { BASE_URL } from "../api/baseUrl";
 import { useAuth } from "../context/Auth/AuthContext";
-import { redirectBasedOnRole } from "../utils/roleUtils";
 
 const RegisterPage = () => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
-  const { login, isAuthenticated } = useAuth();
+  const { register: registerUser, isAuthenticated } = useAuth();
   const firstNameRef = useRef<HTMLInputElement>(null);
   const lastNameRef = useRef<HTMLInputElement>(null);
   const emailRef = useRef<HTMLInputElement>(null);
@@ -35,7 +33,7 @@ const RegisterPage = () => {
   // Redirect if user is already authenticated
   useEffect(() => {
     if (isAuthenticated) {
-      redirectBasedOnRole(navigate);
+      navigate("/");
     }
   }, [isAuthenticated, navigate]);
 
@@ -72,36 +70,11 @@ const RegisterPage = () => {
     setLoading(true);
 
     try {
-      // Make API call to register the user
-      const response = await fetch(`${BASE_URL}/user/register`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ firstName, lastName, email, password }),
-      });
-
-      if (!response.ok) {
-        if (response.status === 409) {
-          setError("An account with this email already exists");
-        } else {
-          setError("Unable to create account. Please try again!");
-        }
-        return;
-      }
-
-      const token = await response.json();
-      if (!token) {
-        setError("Registration failed. Please try again!");
-        return;
-      }
-
-      login(email, token);
-
-      // Redirect based on user role
-      redirectBasedOnRole(navigate, token);
-    } catch {
-      setError("Network error. Please check your connection and try again!");
+      await registerUser(firstName, lastName, email, password);
+      // Registration successful - redirect will be handled by useAuth
+      setError("");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Registration failed");
     } finally {
       setLoading(false);
     }

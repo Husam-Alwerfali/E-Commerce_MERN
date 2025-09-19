@@ -21,7 +21,7 @@ interface CartResponse {
 }
 
 const CartProvider: FC<PropsWithChildren> = ({ children }) => {
-  const { token } = useAuth();
+  const { isAuthenticated } = useAuth();
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [totalPrice, setTotalPrice] = useState<number>(0);
   const [error, setError] = useState("");
@@ -39,14 +39,12 @@ const CartProvider: FC<PropsWithChildren> = ({ children }) => {
   };
 
   useEffect(() => {
-    if (!token) return;
+    if (!isAuthenticated) return;
 
     const fetchCart = async () => {
       try {
         const response = await fetch(`${BASE_URL}/cart`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          credentials: "include",
         });
 
         if (!response.ok) {
@@ -65,7 +63,7 @@ const CartProvider: FC<PropsWithChildren> = ({ children }) => {
     };
 
     fetchCart();
-  }, [token]);
+  }, [isAuthenticated]);
 
   const addToCart = async (productId: string) => {
     try {
@@ -73,8 +71,8 @@ const CartProvider: FC<PropsWithChildren> = ({ children }) => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
         },
+        credentials: "include",
         body: JSON.stringify({ productId, quantity: 1 }),
       });
 
@@ -99,8 +97,8 @@ const CartProvider: FC<PropsWithChildren> = ({ children }) => {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
         },
+        credentials: "include",
         body: JSON.stringify({ productId, quantity }),
       });
 
@@ -123,9 +121,7 @@ const CartProvider: FC<PropsWithChildren> = ({ children }) => {
     try {
       const response = await fetch(`${BASE_URL}/cart/items/${productId}`, {
         method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        credentials: "include",
       });
 
       if (!response.ok) {
@@ -147,9 +143,7 @@ const CartProvider: FC<PropsWithChildren> = ({ children }) => {
     try {
       const response = await fetch(`${BASE_URL}/cart`, {
         method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        credentials: "include",
       });
 
       if (!response.ok) {

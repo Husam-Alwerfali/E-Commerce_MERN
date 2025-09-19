@@ -44,9 +44,26 @@ export const register = async ({
   });
   await newUser.save();
 
+  const token = generateJWT({
+    _id: newUser._id,
+    firstName,
+    lastName,
+    email,
+    role: newUser.role,
+  });
+
   return {
-    data: generateJWT({ firstName, lastName, email, role: newUser.role }),
-    StatusCode: 200,
+    data: {
+      token,
+      user: {
+        _id: newUser._id,
+        firstName,
+        lastName,
+        email,
+        role: newUser.role,
+      },
+    },
+    StatusCode: 201,
   };
 };
 
@@ -58,13 +75,25 @@ export const login = async ({ email, password }: LoginParams) => {
 
   const isPasswordMatch = await bcrypt.compare(password, findUser.password);
   if (isPasswordMatch) {
+    const token = generateJWT({
+      _id: findUser._id,
+      email,
+      firstName: findUser.firstName,
+      lastName: findUser.lastName,
+      role: findUser.role,
+    });
+
     return {
-      data: generateJWT({
-        email,
-        firstName: findUser.firstName,
-        lastName: findUser.lastName,
-        role: findUser.role,
-      }),
+      data: {
+        token,
+        user: {
+          _id: findUser._id,
+          firstName: findUser.firstName,
+          lastName: findUser.lastName,
+          email,
+          role: findUser.role,
+        },
+      },
       StatusCode: 200,
     };
   }

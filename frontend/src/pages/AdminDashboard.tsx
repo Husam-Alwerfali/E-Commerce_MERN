@@ -38,7 +38,6 @@ import {
   DialogTitle,
 } from "../components/ui/dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "../components/ui/avatar";
-import { useAuth } from "../context/Auth/AuthContext";
 import { BASE_URL } from "../api/baseUrl";
 
 interface Product {
@@ -93,11 +92,9 @@ const productSchema = z.object({
 type ProductFormData = z.infer<typeof productSchema>;
 
 // API functions
-const fetchAdminStats = async (token: string): Promise<AdminStats> => {
+const fetchAdminStats = async (): Promise<AdminStats> => {
   const response = await fetch(`${BASE_URL}/product/admin/stats`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
+    credentials: "include",
   });
 
   if (!response.ok) {
@@ -107,11 +104,9 @@ const fetchAdminStats = async (token: string): Promise<AdminStats> => {
   return response.json();
 };
 
-const fetchAllProducts = async (token: string): Promise<Product[]> => {
+const fetchAllProducts = async (): Promise<Product[]> => {
   const response = await fetch(`${BASE_URL}/product`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
+    credentials: "include",
   });
 
   if (!response.ok) {
@@ -121,13 +116,13 @@ const fetchAllProducts = async (token: string): Promise<Product[]> => {
   return response.json();
 };
 
-const addProduct = async (data: ProductFormData, token: string) => {
+const addProduct = async (data: ProductFormData) => {
   const response = await fetch(`${BASE_URL}/product/admin/product`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
     },
+    credentials: "include",
     body: JSON.stringify({
       name: data.name.trim(),
       description: data.description.trim(),
@@ -145,17 +140,13 @@ const addProduct = async (data: ProductFormData, token: string) => {
   return response.json();
 };
 
-const updateProduct = async (
-  id: string,
-  data: ProductFormData,
-  token: string
-) => {
+const updateProduct = async (id: string, data: ProductFormData) => {
   const response = await fetch(`${BASE_URL}/product/admin/product/${id}`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
     },
+    credentials: "include",
     body: JSON.stringify({
       name: data.name.trim(),
       description: data.description.trim(),
@@ -173,12 +164,10 @@ const updateProduct = async (
   return response.json();
 };
 
-const deleteProduct = async (id: string, token: string) => {
+const deleteProduct = async (id: string) => {
   const response = await fetch(`${BASE_URL}/product/admin/product/${id}`, {
     method: "DELETE",
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
+    credentials: "include",
   });
 
   if (!response.ok) {
@@ -193,7 +182,6 @@ const AdminDashboard = () => {
   const [success, setSuccess] = useState("");
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
-  const { token } = useAuth();
   const queryClient = useQueryClient();
 
   // React Hook Form setup
@@ -220,8 +208,7 @@ const AdminDashboard = () => {
     error: statsError,
   } = useQuery({
     queryKey: ["adminStats"],
-    queryFn: () => fetchAdminStats(token!),
-    enabled: !!token,
+    queryFn: () => fetchAdminStats(),
     staleTime: 2 * 60 * 1000, // 2 minutes
   });
 
@@ -232,14 +219,13 @@ const AdminDashboard = () => {
     error: productsError,
   } = useQuery({
     queryKey: ["adminProducts"],
-    queryFn: () => fetchAllProducts(token!),
-    enabled: !!token,
+    queryFn: () => fetchAllProducts(),
     staleTime: 2 * 60 * 1000, // 2 minutes
   });
 
   // React Query - Add product mutation
   const addProductMutation = useMutation({
-    mutationFn: (data: ProductFormData) => addProduct(data, token!),
+    mutationFn: (data: ProductFormData) => addProduct(data),
     onSuccess: (newProduct) => {
       setSuccess(`Product "${newProduct.title}" added successfully!`);
       reset(); // Reset form
@@ -257,7 +243,7 @@ const AdminDashboard = () => {
   // React Query - Update product mutation
   const updateProductMutation = useMutation({
     mutationFn: ({ id, data }: { id: string; data: ProductFormData }) =>
-      updateProduct(id, data, token!),
+      updateProduct(id, data),
     onSuccess: (updatedProduct) => {
       setSuccess(`Product "${updatedProduct.title}" updated successfully!`);
       setEditingProduct(null);
@@ -274,7 +260,7 @@ const AdminDashboard = () => {
 
   // React Query - Delete product mutation
   const deleteProductMutation = useMutation({
-    mutationFn: (id: string) => deleteProduct(id, token!),
+    mutationFn: (id: string) => deleteProduct(id),
     onSuccess: (result) => {
       setSuccess(`Product "${result.product.title}" deleted successfully!`);
       setDeleteConfirmId(null);
@@ -566,6 +552,7 @@ const AdminDashboard = () => {
             </p>
           </div>
 
+          {/*===== Edit Section ==== */}
           <CardContent className="p-8">
             <form
               id="product-form"
@@ -775,6 +762,7 @@ const AdminDashboard = () => {
               </div>
             </form>
           </CardContent>
+          {/*===== Edit Section ==== */}
         </Card>
 
         {/* Delete Confirmation Dialog */}

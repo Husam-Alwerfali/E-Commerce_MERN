@@ -21,10 +21,8 @@ import {
   AlertCircle,
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { BASE_URL } from "../api/baseUrl";
 import { useAuth } from "../context/Auth/AuthContext";
 import { useNavigate } from "react-router-dom";
-import { redirectBasedOnRole } from "../utils/roleUtils";
 
 const LoginPage = () => {
   const [error, setError] = useState("");
@@ -68,32 +66,15 @@ const LoginPage = () => {
     setLoading(true);
 
     try {
-      // Make API call to login the user
-      const response = await fetch(`${BASE_URL}/user/login`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password }),
-      });
-
-      if (!response.ok) {
-        setError("Invalid email or password. Please try again!");
-        return;
-      }
-
-      const token = await response.json();
-      if (!token) {
-        setError("Authentication failed. Please try again!");
-        return;
-      }
-
-      login(email, token);
-
-      // Redirect based on user role
-      redirectBasedOnRole(navigate, token);
-    } catch {
-      setError("Network error. Please check your connection and try again!");
+      await login(email, password);
+      // Redirect to home after successful login
+      navigate("/");
+    } catch (error: unknown) {
+      setError(
+        error instanceof Error
+          ? error.message
+          : "Login failed. Please try again!"
+      );
     } finally {
       setLoading(false);
     }
@@ -106,7 +87,7 @@ const LoginPage = () => {
   // Redirect if already authenticated
   useEffect(() => {
     if (isAuthenticated) {
-      redirectBasedOnRole(navigate);
+      navigate("/");
     }
   }, [isAuthenticated, navigate]);
 

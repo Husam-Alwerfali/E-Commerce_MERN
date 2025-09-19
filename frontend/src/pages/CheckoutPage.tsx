@@ -12,7 +12,7 @@ import { BASE_URL } from "../api/baseUrl";
 
 const CheckoutPage = () => {
   const { cartItems, totalPrice, clearCart } = useCart();
-  const { token } = useAuth();
+  const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
 
   const [address, setAddress] = useState({
@@ -32,7 +32,7 @@ const CheckoutPage = () => {
   };
 
   const handleCheckout = async () => {
-    if (!token) {
+    if (!isAuthenticated) {
       setError("Please login to complete checkout");
       return;
     }
@@ -58,8 +58,8 @@ const CheckoutPage = () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
         },
+        credentials: "include",
         body: JSON.stringify({ address: addressString }),
       });
 
