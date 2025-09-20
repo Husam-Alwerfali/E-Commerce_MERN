@@ -59,7 +59,7 @@ export default function ProductCard({
 
         <CardContent className="flex-grow p-6">
           <h3
-            className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-3 line-clamp-2 hover:text-primary transition-colors"
+            className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-3 line-clamp-1 hover:text-primary transition-colors cursor-help"
             title={title}
           >
             {title}

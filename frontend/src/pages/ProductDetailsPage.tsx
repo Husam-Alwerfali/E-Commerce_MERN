@@ -41,21 +41,23 @@ const ProductDetailsPage = () => {
       }
 
       try {
-        const response = await fetch(`${BASE_URL}/product`);
+        const response = await fetch(`${BASE_URL}/product/${id}`);
         if (!response.ok) {
-          throw new Error("Failed to fetch products");
+          if (response.status === 404) {
+            throw new Error("Product not found");
+          }
+          throw new Error("Failed to fetch product");
         }
 
-        const products: Product[] = await response.json();
-        const foundProduct = products.find((p) => p._id === id);
-
-        if (!foundProduct) {
-          setError("Product not found");
-        } else {
-          setProduct(foundProduct);
-        }
-      } catch {
-        setError("Failed to load product details");
+        const product: Product = await response.json();
+        setProduct(product);
+      } catch (error) {
+        console.error("Error fetching product:", error);
+        setError(
+          error instanceof Error
+            ? error.message
+            : "Failed to load product details"
+        );
       } finally {
         setLoading(false);
       }
@@ -104,9 +106,10 @@ const ProductDetailsPage = () => {
         </Alert>
         <Button
           onClick={handleBackToProducts}
-          className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700"
+          size="lg"
+          className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 transform hover:-translate-y-1 transition-all duration-300 shadow-lg hover:shadow-purple-500/30 px-8 py-4 rounded-xl text-white font-medium"
         >
-          <ArrowLeft className="w-4 h-4 mr-2" />
+          <ArrowLeft className="w-5 h-5 mr-3" />
           Back to Products
         </Button>
       </div>
@@ -117,15 +120,17 @@ const ProductDetailsPage = () => {
     <div className="min-h-screen bg-background text-foreground py-8">
       <div className="container max-w-6xl mx-auto px-4">
         {/* Back Button */}
-        <div className="mb-6">
+        <div className="mb-8">
           <Button
             onClick={handleBackToProducts}
-            variant="outline"
-            size="sm"
-            className="bg-white shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 border-blue-200 text-blue-600 hover:bg-blue-50"
+            variant="ghost"
+            size="lg"
+            className="group bg-card hover:bg-accent border border-border hover:border-primary/30 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-300 rounded-xl px-6 py-3"
           >
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Products
+            <ArrowLeft className="w-5 h-5 mr-3 text-muted-foreground group-hover:text-primary transition-colors duration-300" />
+            <span className="text-base font-medium text-foreground group-hover:text-primary transition-colors duration-300">
+              Back to Products
+            </span>
           </Button>
         </div>
 
@@ -138,17 +143,6 @@ const ProductDetailsPage = () => {
                 alt={product.title}
                 className="w-full h-80 md:h-[500px] object-cover"
               />
-
-              {/* Stock Badge */}
-              <Badge
-                variant={product.stock > 0 ? "secondary" : "destructive"}
-                className="absolute top-4 right-4 font-semibold backdrop-blur-sm px-3 py-1"
-              >
-                <Package className="w-4 h-4 mr-1" />
-                {product.stock > 0
-                  ? `${product.stock} in stock`
-                  : "Out of stock"}
-              </Badge>
             </div>
 
             {/* Product Details */}
@@ -189,45 +183,65 @@ const ProductDetailsPage = () => {
               )}
 
               {/* Add to Cart Button */}
-              <div className="mt-auto">
+              <div className="mt-auto space-y-4">
                 <Button
                   onClick={handleAddToCart}
                   disabled={product.stock === 0 || addingToCart}
-                  className="w-full py-4 text-xl font-semibold bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 dark:from-zinc-800 dark:to-zinc-700 dark:hover:from-zinc-700 dark:hover:to-zinc-600 transform hover:-translate-y-1 transition-all duration-300 shadow-lg hover:shadow-blue-500/30 rounded-xl mb-6"
+                  size="lg"
+                  className={`w-full py-6 text-lg font-bold rounded-xl shadow-lg transition-all duration-300 transform hover:-translate-y-1 ${
+                    product.stock > 0
+                      ? "bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 hover:shadow-2xl hover:shadow-purple-500/30 text-white border-0"
+                      : "bg-gray-200 text-gray-500 cursor-not-allowed hover:transform-none hover:shadow-lg"
+                  }`}
                 >
                   {addingToCart ? (
                     <>
-                      <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                      Adding...
+                      <Loader2 className="w-6 h-6 mr-3 animate-spin" />
+                      Adding to Cart...
                     </>
                   ) : product.stock > 0 ? (
                     <>
-                      <ShoppingCart className="w-5 h-5 mr-2" />
+                      <ShoppingCart className="w-6 h-6 mr-3" />
                       Add to Cart
                     </>
                   ) : (
-                    "Out of Stock"
+                    <>
+                      <Package className="w-6 h-6 mr-3" />
+                      Out of Stock
+                    </>
                   )}
                 </Button>
 
-                {/* Features */}
-                <Separator className="my-6" />
+                {/* Stock Information */}
+                {product.stock > 0 && (
+                  <div className="text-center">
+                    <Badge
+                      variant={product.stock <= 5 ? "destructive" : "secondary"}
+                      className="text-sm font-medium px-3 py-1"
+                    >
+                      {product.stock <= 5
+                        ? `Only ${product.stock} left!`
+                        : `${product.stock} in stock`}
+                    </Badge>
+                  </div>
+                )}
+              </div>
 
-                <div className="flex justify-around text-center">
-                  <div className="flex flex-col items-center">
-                    <Truck className="w-8 h-8 text-blue-500 mb-2" />
-                    <span className="text-xs font-semibold">Free Shipping</span>
-                  </div>
-                  <div className="flex flex-col items-center">
-                    <Shield className="w-8 h-8 text-blue-500 mb-2" />
-                    <span className="text-xs font-semibold">
-                      Secure Payment
-                    </span>
-                  </div>
-                  <div className="flex flex-col items-center">
-                    <Headphones className="w-8 h-8 text-blue-500 mb-2" />
-                    <span className="text-xs font-semibold">24/7 Support</span>
-                  </div>
+              {/* Features */}
+              <Separator className="my-6" />
+
+              <div className="flex justify-around text-center">
+                <div className="flex flex-col items-center">
+                  <Truck className="w-8 h-8 text-blue-500 mb-2" />
+                  <span className="text-xs font-semibold">Free Shipping</span>
+                </div>
+                <div className="flex flex-col items-center">
+                  <Shield className="w-8 h-8 text-blue-500 mb-2" />
+                  <span className="text-xs font-semibold">Secure Payment</span>
+                </div>
+                <div className="flex flex-col items-center">
+                  <Headphones className="w-8 h-8 text-blue-500 mb-2" />
+                  <span className="text-xs font-semibold">24/7 Support</span>
                 </div>
               </div>
             </CardContent>

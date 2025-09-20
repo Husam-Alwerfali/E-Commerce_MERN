@@ -92,17 +92,17 @@ const LoginPage = () => {
   }, [isAuthenticated, navigate]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-600 to-purple-600 dark:from-zinc-900 dark:to-zinc-800 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-blue-600 to-purple-600 dark:from-gray-900 dark:to-slate-800 flex items-center justify-center p-4">
       <div className="w-full max-w-md animate-in fade-in-50 duration-800">
-        <Card className="border-0 shadow-2xl bg-white/95 dark:bg-white/10 backdrop-blur-sm">
+        <Card className="border-0 shadow-2xl bg-white/95 dark:bg-slate-900/95 backdrop-blur-sm">
           {/* Header Section */}
-          <CardHeader className="bg-gradient-to-r from-blue-600 to-purple-600 dark:from-zinc-900 dark:to-zinc-800 text-white rounded-t-lg pb-8">
+          <CardHeader className="bg-gradient-to-r from-blue-600 to-purple-600 dark:from-slate-800 dark:to-slate-700 text-white rounded-t-lg pb-8">
             <div className="text-center space-y-2">
               <Store className="w-16 h-16 mx-auto opacity-90" />
               <CardTitle className="text-3xl font-bold text-shadow-sm">
                 Welcome Back
               </CardTitle>
-              <p className="text-blue-100 text-lg">
+              <p className="text-blue-100 dark:text-slate-300 text-lg">
                 Sign in to your TopShop account
               </p>
             </div>
@@ -113,40 +113,46 @@ const LoginPage = () => {
             <div className="space-y-4">
               {/* Email Field */}
               <div className="space-y-2">
-                <Label htmlFor="email" className="text-blue-700 font-medium">
+                <Label
+                  htmlFor="email"
+                  className="text-blue-700 dark:text-slate-200 font-medium"
+                >
                   Email Address
                 </Label>
                 <div className="relative">
-                  <Mail className="absolute left-3 top-3 w-4 h-4 text-blue-600" />
+                  <Mail className="absolute left-3 top-3 w-4 h-4 text-blue-600 dark:text-slate-400" />
                   <Input
                     ref={emailRef}
                     id="email"
                     type="email"
                     placeholder="Enter your email"
-                    className="pl-10 border-blue-200 focus:border-blue-600 focus:ring-blue-600"
+                    className="pl-10 border-blue-200 dark:border-slate-600 dark:bg-slate-800 dark:text-white dark:placeholder:text-slate-400 focus:border-blue-600 focus:ring-blue-600 dark:focus:border-blue-400"
                   />
                 </div>
               </div>
 
               {/* Password Field */}
               <div className="space-y-2">
-                <Label htmlFor="password" className="text-blue-700 font-medium">
+                <Label
+                  htmlFor="password"
+                  className="text-blue-700 dark:text-slate-200 font-medium"
+                >
                   Password
                 </Label>
                 <div className="relative">
-                  <Lock className="absolute left-3 top-3 w-4 h-4 text-blue-600" />
+                  <Lock className="absolute left-3 top-3 w-4 h-4 text-blue-600 dark:text-slate-400" />
                   <Input
                     ref={passwordRef}
                     id="password"
                     type={showPassword ? "text" : "password"}
                     placeholder="Enter your password"
-                    className="pl-10 pr-10 border-blue-200 focus:border-blue-600 focus:ring-blue-600"
+                    className="pl-10 pr-10 border-blue-200 dark:border-slate-600 dark:bg-slate-800 dark:text-white dark:placeholder:text-slate-400 focus:border-blue-600 focus:ring-blue-600 dark:focus:border-blue-400"
                   />
                   <Button
                     type="button"
                     variant="ghost"
                     size="icon"
-                    className="absolute right-0 top-0 h-full px-3 text-blue-600 hover:text-blue-800"
+                    className="absolute right-0 top-0 h-full px-3 text-blue-600 dark:text-slate-400 hover:text-blue-800 dark:hover:text-blue-400"
                     onClick={handleClickShowPassword}
                   >
                     {showPassword ? (
@@ -191,9 +197,9 @@ const LoginPage = () => {
 
             {/* Divider */}
             <div className="relative">
-              <Separator className="dark:bg-white/10" />
+              <Separator className="dark:bg-slate-600" />
               <div className="absolute inset-0 flex items-center justify-center">
-                <span className="bg-white dark:bg-transparent px-2 text-gray-500 dark:text-gray-400 text-sm">
+                <span className="bg-white dark:bg-slate-900 px-2 text-gray-500 dark:text-slate-400 text-sm">
                   or
                 </span>
               </div>
@@ -201,14 +207,16 @@ const LoginPage = () => {
 
             {/* Register Section */}
             <div className="text-center space-y-3">
-              <p className="text-gray-600">Don't have an account yet?</p>
+              <p className="text-gray-600 dark:text-slate-300">
+                Don't have an account yet?
+              </p>
               <Button
                 onClick={handleRegisterRedirect}
                 variant="outline"
-                className="w-full h-11 border-blue-600 text-blue-600 hover:bg-blue-50 font-semibold transition-all duration-200 hover:-translate-y-0.5"
+                className="w-full h-11 border-blue-600 dark:border-blue-400 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 dark:bg-slate-800 font-semibold transition-all duration-200 hover:-translate-y-0.5"
               >
                 <UserPlus className="mr-2 h-4 w-4" />
-                Create New Account
+                Create Account
               </Button>
             </div>
           </CardContent>

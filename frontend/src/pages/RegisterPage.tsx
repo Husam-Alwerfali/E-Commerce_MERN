@@ -85,16 +85,16 @@ const RegisterPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-500 to-purple-600 dark:from-zinc-900 dark:to-zinc-800 flex items-center py-8">
+    <div className="min-h-screen bg-gradient-to-br from-blue-500 to-purple-600 dark:from-gray-900 dark:to-slate-800 flex items-center py-8">
       <div className="container max-w-2xl mx-auto px-4">
-        <Card className="rounded-2xl shadow-2xl overflow-hidden bg-white/95 dark:bg-white/10 backdrop-blur-sm border border-white/20">
+        <Card className="rounded-2xl shadow-2xl overflow-hidden bg-white/95 dark:bg-slate-900/95 backdrop-blur-sm border border-white/20 dark:border-slate-700">
           {/* Header Section */}
-          <div className="bg-gradient-to-r from-blue-500 to-purple-600 dark:from-zinc-900 dark:to-zinc-800 text-white p-8 text-center">
+          <div className="bg-gradient-to-r from-blue-500 to-purple-600 dark:from-slate-800 dark:to-slate-700 text-white p-8 text-center">
             <UserPlus className="w-16 h-16 mx-auto mb-4 opacity-90" />
             <h1 className="text-4xl font-bold mb-2 text-shadow">
               Create Account
             </h1>
-            <p className="text-lg opacity-90">
+            <p className="text-lg opacity-90 dark:text-slate-300">
               Join TopShop and start shopping today
             </p>
           </div>
@@ -105,26 +105,30 @@ const RegisterPage = () => {
               {/* Name Fields Row */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="firstName">First Name</Label>
+                  <Label htmlFor="firstName" className="dark:text-slate-200">
+                    First Name
+                  </Label>
                   <div className="relative">
-                    <User className="absolute left-3 top-3 h-4 w-4 text-blue-500" />
+                    <User className="absolute left-3 top-3 h-4 w-4 text-blue-500 dark:text-slate-400" />
                     <Input
                       id="firstName"
                       ref={firstNameRef}
                       placeholder="Enter your first name"
-                      className="pl-10"
+                      className="pl-10 dark:bg-slate-800 dark:border-slate-600 dark:text-white dark:placeholder:text-slate-400"
                     />
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="lastName">Last Name</Label>
+                  <Label htmlFor="lastName" className="dark:text-slate-200">
+                    Last Name
+                  </Label>
                   <div className="relative">
-                    <User className="absolute left-3 top-3 h-4 w-4 text-blue-500" />
+                    <User className="absolute left-3 top-3 h-4 w-4 text-blue-500 dark:text-slate-400" />
                     <Input
                       id="lastName"
                       ref={lastNameRef}
                       placeholder="Enter your last name"
-                      className="pl-10"
+                      className="pl-10 dark:bg-slate-800 dark:border-slate-600 dark:text-white dark:placeholder:text-slate-400"
                     />
                   </div>
                 </div>
@@ -132,35 +136,39 @@ const RegisterPage = () => {
 
               {/* Email Field */}
               <div className="space-y-2">
-                <Label htmlFor="email">Email Address</Label>
+                <Label htmlFor="email" className="dark:text-slate-200">
+                  Email Address
+                </Label>
                 <div className="relative">
-                  <Mail className="absolute left-3 top-3 h-4 w-4 text-blue-500" />
+                  <Mail className="absolute left-3 top-3 h-4 w-4 text-blue-500 dark:text-slate-400" />
                   <Input
                     id="email"
                     ref={emailRef}
                     type="email"
                     placeholder="Enter your email address"
-                    className="pl-10"
+                    className="pl-10 dark:bg-slate-800 dark:border-slate-600 dark:text-white dark:placeholder:text-slate-400"
                   />
                 </div>
               </div>
 
               {/* Password Field */}
               <div className="space-y-2">
-                <Label htmlFor="password">Password</Label>
+                <Label htmlFor="password" className="dark:text-slate-200">
+                  Password
+                </Label>
                 <div className="relative">
-                  <Lock className="absolute left-3 top-3 h-4 w-4 text-blue-500" />
+                  <Lock className="absolute left-3 top-3 h-4 w-4 text-blue-500 dark:text-slate-400" />
                   <Input
                     id="password"
                     ref={passwordRef}
                     type={showPassword ? "text" : "password"}
                     placeholder="Enter your password"
-                    className="pl-10 pr-12"
+                    className="pl-10 pr-12 dark:bg-slate-800 dark:border-slate-600 dark:text-white dark:placeholder:text-slate-400"
                   />
                   <button
                     type="button"
                     onClick={handleClickShowPassword}
-                    className="absolute right-3 top-3 text-blue-500 hover:text-blue-600 focus:outline-none"
+                    className="absolute right-3 top-3 text-blue-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 focus:outline-none"
                   >
                     {showPassword ? (
                       <EyeOff className="h-4 w-4" />
@@ -201,9 +209,9 @@ const RegisterPage = () => {
 
               {/* Divider */}
               <div className="relative">
-                <Separator className="dark:bg-white/10" />
+                <Separator className="dark:bg-slate-600" />
                 <div className="absolute inset-0 flex justify-center">
-                  <span className="bg-white dark:bg-transparent px-3 text-sm text-gray-500 dark:text-gray-400 font-medium">
+                  <span className="bg-white dark:bg-slate-900 px-3 text-sm text-gray-500 dark:text-slate-400 font-medium">
                     or
                   </span>
                 </div>
@@ -211,11 +219,13 @@ const RegisterPage = () => {
 
               {/* Login Link */}
               <div className="text-center space-y-4">
-                <p className="text-gray-600">Already have an account?</p>
+                <p className="text-gray-600 dark:text-slate-300">
+                  Already have an account?
+                </p>
                 <Button
                   onClick={handleLoginRedirect}
                   variant="outline"
-                  className="w-full py-4 text-base font-semibold border-2 border-blue-500 text-blue-500 hover:bg-blue-50 transform hover:-translate-y-0.5 transition-all duration-200 rounded-xl"
+                  className="w-full py-4 text-base font-semibold border-2 border-blue-500 dark:border-blue-400 text-blue-500 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 dark:bg-slate-800 transform hover:-translate-y-0.5 transition-all duration-200 rounded-xl"
                 >
                   <LogIn className="w-4 h-4 mr-2" />
                   Sign In to Existing Account
