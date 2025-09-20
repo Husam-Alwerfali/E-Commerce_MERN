@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { Toaster } from "sonner";
 import HomePage from "./pages/HomePage";
 import Navbar from "./components/Navbar";
 import RegisterPage from "./pages/RegisterPage";
@@ -49,6 +50,12 @@ function App() {
                 <Route path="/admin" element={<AdminDashboard />} />
               </Route>
             </Routes>
+            <Toaster
+              position="bottom-right"
+              richColors
+              closeButton
+              theme="system"
+            />
           </BrowserRouter>
         </CartProvider>
       </AuthProvider>

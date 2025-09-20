@@ -59,7 +59,7 @@ export default function ProductCard({
 
         <CardContent className="flex-grow p-6">
           <h3
-            className="text-lg font-semibold text-gray-800 mb-3 line-clamp-2 hover:text-primary transition-colors"
+            className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-3 line-clamp-2 hover:text-primary transition-colors"
             title={title}
           >
             {title}
@@ -93,7 +93,11 @@ export default function ProductCard({
             size="lg"
             onClick={handleAddToCart}
             disabled={stock === 0}
-            className="w-full py-3 text-base font-semibold transition-all duration-300 hover:translate-y-[-2px] hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0 disabled:hover:shadow-none"
+            className={`w-full py-3 text-base font-semibold transition-all duration-300 hover:translate-y-[-2px] hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0 disabled:hover:shadow-none ${
+              stock > 0
+                ? "bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700"
+                : "bg-muted text-muted-foreground"
+            }`}
           >
             <ShoppingCart className="mr-2 h-4 w-4" />
             {stock > 0 ? "Add to Cart" : "Out of Stock"}

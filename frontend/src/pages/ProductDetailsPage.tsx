@@ -30,7 +30,6 @@ const ProductDetailsPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [addingToCart, setAddingToCart] = useState(false);
-  const [success, setSuccess] = useState("");
 
   // Fetch product details
   useEffect(() => {
@@ -74,14 +73,12 @@ const ProductDetailsPage = () => {
     if (!product) return;
 
     setAddingToCart(true);
-    setSuccess("");
-    setError("");
 
     try {
       await addToCart(product._id);
-      setSuccess("Product added to cart successfully!");
+      // Toast notification is handled in CartProvider
     } catch {
-      setError("Failed to add product to cart");
+      // Error toast notification is handled in CartProvider
     } finally {
       setAddingToCart(false);
     }
@@ -93,7 +90,7 @@ const ProductDetailsPage = () => {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center min-h-screen bg-gray-50">
+      <div className="flex justify-center items-center min-h-screen bg-background text-foreground">
         <Loader2 className="h-16 w-16 animate-spin text-blue-500" />
       </div>
     );
@@ -117,7 +114,7 @@ const ProductDetailsPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen bg-background text-foreground py-8">
       <div className="container max-w-6xl mx-auto px-4">
         {/* Back Button */}
         <div className="mb-6">
@@ -132,7 +129,7 @@ const ProductDetailsPage = () => {
           </Button>
         </div>
 
-        <Card className="rounded-3xl overflow-hidden shadow-2xl bg-white/95 backdrop-blur-sm border border-white/20">
+        <Card className="rounded-3xl overflow-hidden shadow-2xl bg-white/95 dark:bg-white/5 backdrop-blur-sm border border-white/20 dark:border-white/10">
           <div className="grid grid-cols-1 md:grid-cols-2">
             {/* Product Image */}
             <div className="relative">
@@ -157,7 +154,7 @@ const ProductDetailsPage = () => {
             {/* Product Details */}
             <CardContent className="p-8 flex flex-col h-full">
               {/* Product Title */}
-              <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent leading-tight">
+              <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-blue-600 to-purple-600 dark:from-zinc-100 dark:to-zinc-300 bg-clip-text text-transparent leading-tight">
                 {product.title}
               </h1>
 
@@ -169,7 +166,9 @@ const ProductDetailsPage = () => {
                     className="w-5 h-5 fill-yellow-400 text-yellow-400"
                   />
                 ))}
-                <span className="ml-2 text-gray-600">(4.8) 127 reviews</span>
+                <span className="ml-2 text-gray-600 dark:text-gray-300">
+                  (4.8) 127 reviews
+                </span>
               </div>
 
               {/* Price */}
@@ -178,19 +177,11 @@ const ProductDetailsPage = () => {
               </div>
 
               {/* Description */}
-              <p className="text-gray-700 text-lg leading-relaxed mb-6 flex-1">
+              <p className="text-gray-700 dark:text-gray-300 text-lg leading-relaxed mb-6 flex-1">
                 {product.description}
               </p>
 
-              {/* Success/Error Messages */}
-              {success && (
-                <Alert className="mb-6 bg-green-50 border-green-200">
-                  <AlertDescription className="text-green-700">
-                    {success}
-                  </AlertDescription>
-                </Alert>
-              )}
-
+              {/* Error Messages */}
               {error && (
                 <Alert variant="destructive" className="mb-6">
                   <AlertDescription>{error}</AlertDescription>
@@ -202,7 +193,7 @@ const ProductDetailsPage = () => {
                 <Button
                   onClick={handleAddToCart}
                   disabled={product.stock === 0 || addingToCart}
-                  className="w-full py-4 text-xl font-semibold bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 transform hover:-translate-y-1 transition-all duration-300 shadow-lg hover:shadow-blue-500/30 rounded-xl mb-6"
+                  className="w-full py-4 text-xl font-semibold bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 dark:from-zinc-800 dark:to-zinc-700 dark:hover:from-zinc-700 dark:hover:to-zinc-600 transform hover:-translate-y-1 transition-all duration-300 shadow-lg hover:shadow-blue-500/30 rounded-xl mb-6"
                 >
                   {addingToCart ? (
                     <>

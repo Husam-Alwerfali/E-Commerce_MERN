@@ -115,7 +115,7 @@ const CartPage = () => {
           <Card className="mb-6">
             <CardContent className="p-0">
               {/* Cart Header */}
-              <div className="bg-gradient-to-r from-blue-500 to-purple-600 text-white p-6 flex items-center justify-between">
+              <div className="bg-gradient-to-r from-blue-500 to-purple-600 dark:from-zinc-900 dark:to-zinc-800 text-white p-6 flex items-center justify-between">
                 <div className="flex items-center gap-4">
                   <ShoppingBag className="w-8 h-8" />
                   <h2 className="text-2xl font-semibold">
@@ -125,7 +125,7 @@ const CartPage = () => {
                 <Button
                   onClick={handelClearCart}
                   variant="outline"
-                  className="text-purple-500 border-purple-300 hover:bg-red-50 hover:border-red-500 hover:text-red-600 bg-white/90"
+                  className="text-purple-500 dark:text-purple-300 border-purple-300 dark:border-white/20 hover:bg-red-50 dark:hover:bg-red-950/40 hover:border-red-500 hover:text-red-600 dark:hover:text-red-400 bg-white/90 dark:bg-white/10"
                 >
                   <RotateCcw className="w-4 h-4 mr-2" />
                   Clear All
@@ -137,7 +137,7 @@ const CartPage = () => {
                 {cartItems.map((item) => (
                   <Card
                     key={item.productId}
-                    className="mb-4 border border-gray-200 hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
+                    className="mb-4 border border-gray-200 dark:border-white/10 hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
                   >
                     <CardContent className="p-6">
                       <div className="grid grid-cols-1 sm:grid-cols-12 gap-6 items-center">
@@ -154,10 +154,10 @@ const CartPage = () => {
 
                         {/* Product Info */}
                         <div className="sm:col-span-5 space-y-3">
-                          <h3 className="text-xl font-semibold text-gray-800">
+                          <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-100">
                             {item.title}
                           </h3>
-                          <p className="text-gray-600">
+                          <p className="text-gray-600 dark:text-gray-300">
                             Price: ${item.price} LYD each
                           </p>
                           <Badge
@@ -243,7 +243,7 @@ const CartPage = () => {
                             </Button>
                           </div>
 
-                          <p className="text-xs text-gray-500">
+                          <p className="text-xs text-gray-500 dark:text-gray-400">
                             Max: {item.stock}
                           </p>
 
@@ -268,7 +268,7 @@ const CartPage = () => {
 
               <div className="space-y-4 mb-6">
                 <div className="flex justify-between items-center">
-                  <span className="text-gray-600">
+                  <span className="text-gray-600 dark:text-gray-300">
                     Subtotal ({cartItems.length} items)
                   </span>
                   <span className="font-medium">
@@ -276,7 +276,9 @@ const CartPage = () => {
                   </span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-gray-600">Shipping</span>
+                  <span className="text-gray-600 dark:text-gray-300">
+                    Shipping
+                  </span>
                   <span className="text-green-600 font-medium">Free</span>
                 </div>
                 <Separator />
@@ -296,7 +298,7 @@ const CartPage = () => {
                 Proceed to Checkout
               </Button>
 
-              <div className="mt-6 flex items-center gap-2 text-gray-500">
+              <div className="mt-6 flex items-center gap-2 text-gray-500 dark:text-gray-400">
                 <Truck className="w-5 h-5" />
                 <span className="text-sm">Free shipping on all orders</span>
               </div>
@@ -308,18 +310,18 @@ const CartPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen bg-background text-foreground py-8">
       <div className="container mx-auto max-w-7xl px-4">
         {cartItems.length ? (
           renderCartItems()
         ) : (
           <Card className="text-center py-16">
             <CardContent>
-              <ShoppingCart className="w-20 h-20 text-gray-400 mb-6 mx-auto" />
-              <h2 className="text-3xl font-semibold text-gray-800 mb-4">
+              <ShoppingCart className="w-20 h-20 text-gray-400 dark:text-gray-500 mb-6 mx-auto" />
+              <h2 className="text-3xl font-semibold text-gray-800 dark:text-gray-100 mb-4">
                 Your cart is empty
               </h2>
-              <p className="text-gray-600 mb-8 max-w-md mx-auto">
+              <p className="text-gray-600 dark:text-gray-300 mb-8 max-w-md mx-auto">
                 Looks like you haven't added any items to your cart yet. Start
                 shopping to fill it up!
               </p>

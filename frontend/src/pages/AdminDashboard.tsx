@@ -3,6 +3,7 @@ import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 import {
   Plus,
   Package,
@@ -188,7 +189,6 @@ const deleteProduct = async (id: string) => {
 };
 
 const AdminDashboard = () => {
-  const [success, setSuccess] = useState("");
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -240,16 +240,14 @@ const AdminDashboard = () => {
   const addProductMutation = useMutation({
     mutationFn: (data: ProductFormData) => addProduct(data),
     onSuccess: (newProduct) => {
-      setSuccess(`Product "${newProduct.title}" added successfully!`);
+      toast.success(`Product "${newProduct.title}" added successfully!`);
       reset(); // Reset form
       // Invalidate and refetch queries
       queryClient.invalidateQueries({ queryKey: ["adminStats"] });
       queryClient.invalidateQueries({ queryKey: ["adminProducts"] });
-      // Clear success message after 5 seconds
-      setTimeout(() => setSuccess(""), 5000);
     },
     onError: (error: Error) => {
-      console.error("Error adding product:", error.message);
+      toast.error(error.message || "Failed to add product");
     },
   });
 
@@ -258,16 +256,14 @@ const AdminDashboard = () => {
     mutationFn: ({ id, data }: { id: string; data: ProductFormData }) =>
       updateProduct(id, data),
     onSuccess: (updatedProduct) => {
-      setSuccess(`Product "${updatedProduct.title}" updated successfully!`);
+      toast.success(`Product "${updatedProduct.title}" updated successfully!`);
       setEditingProduct(null);
       // Invalidate and refetch queries
       queryClient.invalidateQueries({ queryKey: ["adminStats"] });
       queryClient.invalidateQueries({ queryKey: ["adminProducts"] });
-      // Clear success message after 5 seconds
-      setTimeout(() => setSuccess(""), 5000);
     },
     onError: (error: Error) => {
-      console.error("Error updating product:", error.message);
+      toast.error(error.message || "Failed to update product");
     },
   });
 
@@ -275,22 +271,19 @@ const AdminDashboard = () => {
   const deleteProductMutation = useMutation({
     mutationFn: (id: string) => deleteProduct(id),
     onSuccess: (result) => {
-      setSuccess(`Product "${result.product.title}" deleted successfully!`);
+      toast.success(`Product "${result.product.title}" deleted successfully!`);
       setDeleteConfirmId(null);
       // Invalidate and refetch queries
       queryClient.invalidateQueries({ queryKey: ["adminStats"] });
       queryClient.invalidateQueries({ queryKey: ["adminProducts"] });
-      // Clear success message after 5 seconds
-      setTimeout(() => setSuccess(""), 5000);
     },
     onError: (error: Error) => {
-      console.error("Error deleting product:", error.message);
+      toast.error(error.message || "Failed to delete product");
     },
   });
 
   // Form submit handler
   const onSubmit = (data: ProductFormData) => {
-    setSuccess(""); // Clear previous success message
     addProductMutation.mutate(data);
   };
 
@@ -321,7 +314,6 @@ const AdminDashboard = () => {
   // Handle update product
   const handleUpdateProduct = (data: ProductFormData) => {
     if (editingProduct) {
-      setSuccess(""); // Clear previous success message
       updateProductMutation.mutate({
         id: editingProduct._id,
         data,
@@ -354,11 +346,11 @@ const AdminDashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen bg-background text-foreground py-8">
       <div className="container max-w-6xl mx-auto px-4">
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-5xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-4">
+          <h1 className="text-5xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 dark:from-zinc-100 dark:to-zinc-300 bg-clip-text text-transparent mb-4">
             Admin Dashboard
           </h1>
         </div>
@@ -377,7 +369,7 @@ const AdminDashboard = () => {
         ) : stats ? (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
             {/* Total Products Card */}
-            <Card className="bg-gradient-to-br from-blue-500 to-purple-600 text-white border-0 hover:scale-105 transition-transform duration-300">
+            <Card className="bg-gradient-to-br from-blue-500 to-purple-600 dark:from-zinc-900 dark:to-zinc-800 text-white border-0 hover:scale-105 transition-transform duration-300">
               <CardContent className="p-6 text-center">
                 <Package className="w-12 h-12 mx-auto mb-4 opacity-90" />
                 <div className="text-4xl font-bold mb-2">
@@ -388,7 +380,7 @@ const AdminDashboard = () => {
             </Card>
 
             {/* Total Sales Card */}
-            <Card className="bg-gradient-to-br from-red-500 to-pink-500 text-white border-0 hover:scale-105 transition-transform duration-300">
+            <Card className="bg-gradient-to-br from-red-500 to-pink-500 dark:from-rose-900 dark:to-pink-900 text-white border-0 hover:scale-105 transition-transform duration-300">
               <CardContent className="p-6 text-center">
                 <TrendingUp className="w-12 h-12 mx-auto mb-4 opacity-90" />
                 <div className="text-4xl font-bold mb-2">
@@ -399,7 +391,7 @@ const AdminDashboard = () => {
             </Card>
 
             {/* Top Product Card */}
-            <Card className="bg-gradient-to-br from-teal-500 to-green-500 text-white border-0 hover:scale-105 transition-transform duration-300">
+            <Card className="bg-gradient-to-br from-teal-500 to-green-500 dark:from-emerald-900 dark:to-green-900 text-white border-0 hover:scale-105 transition-transform duration-300">
               <CardContent className="p-6 text-center">
                 <BarChart3 className="w-12 h-12 mx-auto mb-4 opacity-90" />
                 <div className="text-4xl font-bold mb-2">
@@ -711,14 +703,20 @@ const AdminDashboard = () => {
                       <textarea
                         {...field}
                         id="description"
-                        rows={3}
-                        placeholder="Enter product description"
-                        className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none ${
+                        rows={4}
+                        maxLength={500}
+                        placeholder="Describe the product features, materials, and key benefits"
+                        aria-invalid={!!errors.description}
+                        className={`w-full px-3 py-2 rounded-md border bg-background text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:ring-offset-background resize-y min-h-[96px] ${
                           errors.description
-                            ? "border-red-300"
-                            : "border-gray-300"
+                            ? "border-destructive"
+                            : "border-input"
                         }`}
                       />
+                      <div className="mt-1 flex items-center justify-between text-xs text-muted-foreground">
+                        <span>Min 10, Max 500 characters</span>
+                        <span>{field.value?.length || 0}/500</span>
+                      </div>
                       {errors.description && (
                         <p className="text-sm text-red-600 mt-1">
                           {errors.description.message}
@@ -780,26 +778,6 @@ const AdminDashboard = () => {
                   />
                 </div>
               </div>
-              {/* Success Alert */}
-              {success && (
-                <Alert className="bg-green-50 border-green-200">
-                  <AlertDescription className="text-green-700">
-                    {success}
-                  </AlertDescription>
-                </Alert>
-              )}
-              {/* Error Alert */}
-              {(addProductMutation.error ||
-                updateProductMutation.error ||
-                deleteProductMutation.error) && (
-                <Alert variant="destructive">
-                  <AlertDescription>
-                    {addProductMutation.error?.message ||
-                      updateProductMutation.error?.message ||
-                      deleteProductMutation.error?.message}
-                  </AlertDescription>
-                </Alert>
-              )}
               {/* Submit Buttons */}
               <div className="flex gap-4">
                 {editingProduct && (

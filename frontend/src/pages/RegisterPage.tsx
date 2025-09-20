@@ -85,11 +85,11 @@ const RegisterPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-500 to-purple-600 flex items-center py-8">
+    <div className="min-h-screen bg-gradient-to-br from-blue-500 to-purple-600 dark:from-zinc-900 dark:to-zinc-800 flex items-center py-8">
       <div className="container max-w-2xl mx-auto px-4">
-        <Card className="rounded-2xl shadow-2xl overflow-hidden bg-white/95 backdrop-blur-sm border border-white/20">
+        <Card className="rounded-2xl shadow-2xl overflow-hidden bg-white/95 dark:bg-white/10 backdrop-blur-sm border border-white/20">
           {/* Header Section */}
-          <div className="bg-gradient-to-r from-blue-500 to-purple-600 text-white p-8 text-center">
+          <div className="bg-gradient-to-r from-blue-500 to-purple-600 dark:from-zinc-900 dark:to-zinc-800 text-white p-8 text-center">
             <UserPlus className="w-16 h-16 mx-auto mb-4 opacity-90" />
             <h1 className="text-4xl font-bold mb-2 text-shadow">
               Create Account
@@ -201,9 +201,9 @@ const RegisterPage = () => {
 
               {/* Divider */}
               <div className="relative">
-                <Separator />
+                <Separator className="dark:bg-white/10" />
                 <div className="absolute inset-0 flex justify-center">
-                  <span className="bg-white px-3 text-sm text-gray-500 font-medium">
+                  <span className="bg-white dark:bg-transparent px-3 text-sm text-gray-500 dark:text-gray-400 font-medium">
                     or
                   </span>
                 </div>

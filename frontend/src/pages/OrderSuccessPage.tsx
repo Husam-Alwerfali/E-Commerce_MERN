@@ -12,9 +12,9 @@ const OrderSuccessPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen bg-background text-foreground py-8">
       <div className="container max-w-2xl mx-auto px-4">
-        <Card className="bg-gradient-to-br from-green-50 to-blue-50 border-0 shadow-2xl">
+        <Card className="bg-gradient-to-br from-green-50 to-blue-50 dark:from-zinc-900 dark:to-zinc-800 border-0 shadow-2xl">
           <CardContent className="p-8 text-center">
             {/* Success Icon */}
             <div className="mb-6">
@@ -27,7 +27,7 @@ const OrderSuccessPage = () => {
             </h1>
 
             {/* Success Message */}
-            <p className="text-xl text-gray-600 mb-8 leading-relaxed">
+            <p className="text-xl text-gray-600 dark:text-gray-300 mb-8 leading-relaxed">
               Thank you for your purchase! Your order has been confirmed and is
               being processed.
             </p>
@@ -53,7 +53,7 @@ const OrderSuccessPage = () => {
             <Button
               onClick={handelHome}
               size="lg"
-              className="inline-flex items-center gap-2 bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 px-8 py-3 text-lg"
+              className="inline-flex items-center gap-2 px-8 py-3 text-lg bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 transform hover:-translate-y-1 transition-all duration-300 shadow-lg hover:shadow-blue-500/30"
             >
               <ShoppingBag className="h-5 w-5" />
               Continue Shopping
@@ -63,10 +63,10 @@ const OrderSuccessPage = () => {
 
         {/* Additional Information */}
         <div className="mt-8 text-center">
-          <h3 className="text-xl font-semibold text-gray-900 mb-2">
+          <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">
             Need Help?
           </h3>
-          <p className="text-gray-600">
+          <p className="text-gray-600 dark:text-gray-300">
             If you have any questions about your order, please contact our
             customer support.
           </p>

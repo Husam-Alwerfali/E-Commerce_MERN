@@ -92,11 +92,11 @@ const LoginPage = () => {
   }, [isAuthenticated, navigate]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-600 to-purple-600 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-blue-600 to-purple-600 dark:from-zinc-900 dark:to-zinc-800 flex items-center justify-center p-4">
       <div className="w-full max-w-md animate-in fade-in-50 duration-800">
-        <Card className="border-0 shadow-2xl bg-white/95 backdrop-blur-sm">
+        <Card className="border-0 shadow-2xl bg-white/95 dark:bg-white/10 backdrop-blur-sm">
           {/* Header Section */}
-          <CardHeader className="bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-t-lg pb-8">
+          <CardHeader className="bg-gradient-to-r from-blue-600 to-purple-600 dark:from-zinc-900 dark:to-zinc-800 text-white rounded-t-lg pb-8">
             <div className="text-center space-y-2">
               <Store className="w-16 h-16 mx-auto opacity-90" />
               <CardTitle className="text-3xl font-bold text-shadow-sm">
@@ -191,9 +191,11 @@ const LoginPage = () => {
 
             {/* Divider */}
             <div className="relative">
-              <Separator />
+              <Separator className="dark:bg-white/10" />
               <div className="absolute inset-0 flex items-center justify-center">
-                <span className="bg-white px-2 text-gray-500 text-sm">or</span>
+                <span className="bg-white dark:bg-transparent px-2 text-gray-500 dark:text-gray-400 text-sm">
+                  or
+                </span>
               </div>
             </div>
 

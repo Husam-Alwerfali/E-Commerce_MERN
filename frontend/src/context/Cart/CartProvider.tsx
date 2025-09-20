@@ -3,6 +3,7 @@ import type { CartItem } from "../../types/CartItem";
 import { CartContext } from "./CartContext";
 import { BASE_URL } from "../../api/baseUrl";
 import { useAuth } from "../Auth/AuthContext";
+import { toast } from "sonner";
 
 interface CartItemResponse {
   product: {
@@ -77,7 +78,8 @@ const CartProvider: FC<PropsWithChildren> = ({ children }) => {
       });
 
       if (!response.ok) {
-        setError("Failed to add item to cart. Please try again!");
+        const errorData = await response.json();
+        toast.error(errorData.data || "Failed to add item to cart");
         return;
       }
 
@@ -85,9 +87,10 @@ const CartProvider: FC<PropsWithChildren> = ({ children }) => {
       const cartItemsMapped = mapCartItems(cart);
       setCartItems(cartItemsMapped);
       setTotalPrice(cart.totalPrice);
+      toast.success("Item added to cart successfully!");
     } catch (error) {
       console.error("Failed to add to cart:", error);
-      setError("Failed to add item to cart. Please try again!");
+      toast.error("Failed to add item to cart. Please try again!");
     }
   };
 
@@ -103,7 +106,8 @@ const CartProvider: FC<PropsWithChildren> = ({ children }) => {
       });
 
       if (!response.ok) {
-        setError("Failed to update item in cart. Please try again!");
+        const errorData = await response.json();
+        toast.error(errorData.data || "Failed to update item in cart");
         return;
       }
 
@@ -111,9 +115,10 @@ const CartProvider: FC<PropsWithChildren> = ({ children }) => {
       const cartItemsMapped = mapCartItems(cart);
       setCartItems(cartItemsMapped);
       setTotalPrice(cart.totalPrice);
+      toast.success("Cart updated successfully!");
     } catch (error) {
       console.error("Failed to update cart:", error);
-      setError("Failed to update item in cart. Please try again!");
+      toast.error("Failed to update item in cart. Please try again!");
     }
   };
 
@@ -125,7 +130,8 @@ const CartProvider: FC<PropsWithChildren> = ({ children }) => {
       });
 
       if (!response.ok) {
-        setError("Failed to delete item from cart. Please try again!");
+        const errorData = await response.json();
+        toast.error(errorData.data || "Failed to delete item from cart");
         return;
       }
 
@@ -133,9 +139,10 @@ const CartProvider: FC<PropsWithChildren> = ({ children }) => {
       const cartItemsMapped = mapCartItems(cart);
       setCartItems(cartItemsMapped);
       setTotalPrice(cart.totalPrice);
+      toast.success("Item removed from cart!");
     } catch (error) {
       console.error("Failed to delete from cart:", error);
-      setError("Failed to delete item from cart. Please try again!");
+      toast.error("Failed to delete item from cart. Please try again!");
     }
   };
 
@@ -147,15 +154,16 @@ const CartProvider: FC<PropsWithChildren> = ({ children }) => {
       });
 
       if (!response.ok) {
-        setError("Failed to empty cart. Please try again!");
+        toast.error("Failed to empty cart. Please try again!");
         return;
       }
 
       setCartItems([]);
       setTotalPrice(0);
+      toast.success("Cart cleared successfully!");
     } catch (error) {
       console.error("Failed to empty cart:", error);
-      setError("Failed to empty cart. Please try again!");
+      toast.error("Failed to empty cart. Please try again!");
     }
   };
 

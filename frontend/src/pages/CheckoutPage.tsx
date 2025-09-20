@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 import { Card, CardContent } from "../components/ui/card";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
@@ -22,7 +23,6 @@ const CheckoutPage = () => {
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
 
   const handleAddressChange = (field: string, value: string) => {
     setAddress((prev) => ({
@@ -33,17 +33,17 @@ const CheckoutPage = () => {
 
   const handleCheckout = async () => {
     if (!isAuthenticated) {
-      setError("Please login to complete checkout");
+      toast.error("Please login to complete checkout");
       return;
     }
 
     if (!address.street || !address.city || !address.PhoneNumber) {
-      setError("Please fill in all address fields");
+      toast.error("Please fill in all address fields");
       return;
     }
 
     if (cartItems.length === 0) {
-      setError("Your cart is empty");
+      toast.error("Your cart is empty");
       return;
     }
 
@@ -68,20 +68,21 @@ const CheckoutPage = () => {
         throw new Error(`Checkout failed: ${errorText}`);
       }
 
-      navigate("/order-success");
-      setSuccess("Order placed successfully!");
+      toast.success("Order placed successfully!");
 
       // Clear cart and redirect after successful checkout
       if (clearCart) {
         clearCart();
       }
 
+      navigate("/order-success");
+
       //   setTimeout(() => {
       //     navigate("/");
       //   }, 4000);
     } catch (error) {
       console.error("Checkout error:", error);
-      setError(error instanceof Error ? error.message : "Checkout failed");
+      toast.error(error instanceof Error ? error.message : "Checkout failed");
     } finally {
       setLoading(false);
     }
@@ -94,9 +95,8 @@ const CheckoutPage = () => {
           <AlertDescription>
             Your cart is empty.{" "}
             <Button
-              variant="link"
-              className="p-0 h-auto text-blue-600"
               onClick={() => navigate("/")}
+              className="ml-2 inline-flex items-center px-4 py-2 text-sm font-semibold text-white rounded-md bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 shadow-sm"
             >
               Continue Shopping
             </Button>
@@ -198,14 +198,6 @@ const CheckoutPage = () => {
             {error && (
               <Alert variant="destructive" className="mt-4">
                 <AlertDescription>{error}</AlertDescription>
-              </Alert>
-            )}
-
-            {success && (
-              <Alert className="mt-4 bg-green-50 border-green-200">
-                <AlertDescription className="text-green-700">
-                  {success}
-                </AlertDescription>
               </Alert>
             )}
 
